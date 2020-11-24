@@ -45,6 +45,8 @@ def parse(html):
         titles.append(title)
         paras.append(para)
 
+    return
+
 
 def scrape_from_file(plant):
 
