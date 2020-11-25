@@ -5,7 +5,7 @@ import os
 import plantbase
 import pandas as pd
 # Import from our lib
-from plantbase.lib import clean_data
+#from plantbase.lib import clean_data
 import pytest
 
 
