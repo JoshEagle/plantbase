@@ -1,1 +1,2 @@
-BUCKET NAME = "xxx"
+BUCKET_NAME = "plantbase_images"
+PROJECT_ID = "plantbase"
