@@ -1,3 +1,9 @@
+
+
+##### Machine Type - - - - - - - - - - - - - - - - - - - - - - - - -
+MACHINE_TYPE=n1-standard-16
+
+
 # ----------------------------------
 #          INSTALL & TEST
 # ----------------------------------
@@ -46,6 +52,17 @@ count_lines:
 	@find ./tests -name '*.py' -exec  wc -l {} \; | sort -n| awk \
         '{printf "%4s %s\n", $$1, $$2}{s+=$$0}END{print s}'
 	@echo ''
+
+gcp_submit_training:
+	gcloud ai-platform jobs submit training ${JOB_NAME} \
+		--job-dir gs://${BUCKET_NAME}/${BUCKET_TRAINING_FOLDER} \
+		--package-path ${PACKAGE_NAME} \
+		--module-name ${PACKAGE_NAME}.${FILENAME} \
+		--python-version=${PYTHON_VERSION} \
+		--runtime-version=${RUNTIME_VERSION} \
+		--region ${REGION} \
+		--scale-tier CUSTOM \
+		--master-machine-type ${MACHINE_TYPE}
 
 # ----------------------------------
 #      UPLOAD PACKAGE TO PYPI
