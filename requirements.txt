@@ -10,7 +10,6 @@ yapf
 python-gitlab
 twine
 tensorflow
-os
 json
 joblib
 google
