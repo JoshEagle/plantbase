@@ -18,7 +18,7 @@ def get_test_data():
 
     for index, row in test_df.iterrows():
         img = load_img(rf"../raw_data/test/{row.id}.jpg", target_size=(256, 256))
-        img = tensorflow.keras.preprocessing.image.img_to_array(img)
+        img = img_to_array(img)
         #img = tensorflow.expand_dims(img, 0)
         X_list.append(img)
         y_list.append((row.genus, row.id))
@@ -29,23 +29,23 @@ def get_test_data():
     return X_test, y_true
 
 
+# def compute_success_ratio():
+#     y_pred = model.predict(X_test)
+#     y_pred_df = pd.DataFrame(y_pred)
+#     y_pred_df = y_pred_df.rename(columns = rename_columns)
 
-    y_pred = model.predict(X_test)
-    y_pred_df = pd.DataFrame(y_pred)
-    y_pred_df = y_pred_df.rename(columns = rename_columns)
+#     y_pred_df['pred_genus'] = y_pred_df.idxmax(axis = 1)
+#     prediction_review = (y_pred_df['pred_genus'] == y_true_df['true_genus'])
+#     prediction_vec_df = y_pred_df[['pred_genus']].copy()
+#     prediction_vec_df['true_genus'] = y_true_df['true_genus'].copy()
+#     prediction_vec_df['result'] = (y_pred_df['pred_genus'] == y_true_df['true_genus'])
+#     prediction_vec_df['false'] = prediction_vec_df['result'].apply(lambda x: 1 if x == False else 0)
+#     prediction_vec_df['true'] = prediction_vec_df['result'].apply(lambda x: 1 if x == True else 0)
+#     true_pos_neg = prediction_vec_df.groupby('true_genus').sum().drop(columns=['result'])
+#     true_pos_neg['percent_true'] = true_pos_neg['true'] / (true_pos_neg['true'] + true_pos_neg['false'])
+#     success_ratio = round(true_pos_neg[['percent_true']]*100).sort_values(by='percent_true', ascending=False)
 
-    y_pred_df['pred_genus'] = y_pred_df.idxmax(axis = 1)
-    prediction_review = (y_pred_df['pred_genus'] == y_true_df['true_genus'])
-    prediction_vec_df = y_pred_df[['pred_genus']].copy()
-    prediction_vec_df['true_genus'] = y_true_df['true_genus'].copy()
-    prediction_vec_df['result'] = (y_pred_df['pred_genus'] == y_true_df['true_genus'])
-    prediction_vec_df['false'] = prediction_vec_df['result'].apply(lambda x: 1 if x == False else 0)
-    prediction_vec_df['true'] = prediction_vec_df['result'].apply(lambda x: 1 if x == True else 0)
-    true_pos_neg = prediction_vec_df.groupby('true_genus').sum().drop(columns=['result'])
-    true_pos_neg['percent_true'] = true_pos_neg['true'] / (true_pos_neg['true'] + true_pos_neg['false'])
-    success_ratio = round(true_pos_neg[['percent_true']]*100).sort_values(by='percent_true', ascending=False)
-
-    return success_ratio
+#     return success_ratio
 
 
 
