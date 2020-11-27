@@ -5,7 +5,7 @@ import joblib
 from google.cloud import storage
 from google.oauth2 import service_account
 from termcolor import colored
-from TaxiFareModel.params import BUCKET_NAME, PROJECT_ID, MODEL_NAME, MODEL_VERSION
+from params import BUCKET_NAME, PROJECT_ID, MODEL_NAME, MODEL_VERSION
 
 
 def get_credentials():
