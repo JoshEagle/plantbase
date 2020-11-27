@@ -10,7 +10,6 @@ yapf
 python-gitlab
 twine
 tensorflow
-json
 joblib
 google
 termcolor
