@@ -34,7 +34,7 @@ def get_data(local=True, **kwargs):
 
     train_generator = train_datagen.flow_from_directory(
                     path,
-                    target_size=(img_height, img_width),
+                    target_size=(256, 256),
                     batch_size=32,
                     class_mode='binary',
                     subset='training',
@@ -42,8 +42,8 @@ def get_data(local=True, **kwargs):
                     )
 
     val_generator = valid_datagen.flow_from_directory(
-                        directory, # same directory as training data
-                        target_size=(img_height, img_width),
+                        path, # same directory as training data
+                        target_size=(256, 256),
                         batch_size=32,
                         class_mode='binary',
                         subset='validation',
