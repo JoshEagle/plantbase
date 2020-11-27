@@ -1,3 +1,30 @@
+BUCKET_NAME=plantbase_images
+
+##### Data  - - - - - - - - - - - - - - - - - - - - - - - -
+
+# not required here
+
+##### Training  - - - - - - - - - - - - - - - - - - - - - -
+
+# will store the packages uploaded to GCP for the training
+BUCKET_TRAINING_FOLDER = 'trainings'
+
+### GCP AI Platform - - - - - - - - - - - - - - - - - - - -
+
+REGION=europe-west1
+
+PYTHON_VERSION=3.7
+FRAMEWORK=scikit-learn
+RUNTIME_VERSION=1.15
+
+##### Package params  - - - - - - - - - - - - - - - - - - -
+
+PACKAGE_NAME=plantbase
+FILENAME=trainer
+
+##### Job - - - - - - - - - - - - - - - - - - - - - - - - -
+
+JOB_NAME=plantbase_pipeline$(shell date +'%Y%m%d_%H%M%S')
 
 
 ##### Machine Type - - - - - - - - - - - - - - - - - - - - - - - - -
