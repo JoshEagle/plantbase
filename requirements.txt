@@ -9,3 +9,14 @@ black
 yapf
 python-gitlab
 twine
+tensorflow
+os
+json
+joblib
+google
+termcolor
+datetime
+numpy
+matplotlib
+
+
