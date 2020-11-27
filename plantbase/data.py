@@ -1,7 +1,7 @@
 import pandas as pd
 # from google.cloud import storage
 # from params import BUCKET_NAME, BUCKET_TRAIN_DATA_PATH
-from tensorflow.keras.preprocessing import image_dataset_from_directory
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 LOCAL_PATH = '../raw_data/train'
 # GCP_PATH = "gs://{}/{}".format(BUCKET_NAME, BUCKET_TRAIN_DATA_PATH)"
@@ -20,29 +20,37 @@ def get_data(local=True, **kwargs):
     else:
         path = GCP_PATH
 
-    train_dataset = image_dataset_from_directory(
-            path, labels='inferred', label_mode='int',
-            color_mode='rgb', batch_size=32, image_size=(256, 256), shuffle=True, seed=123,
-            validation_split=0.2, subset="training", interpolation='bilinear', follow_links=False
-            )
+    train_datagen = ImageDataGenerator(
+        rescale=1./255,
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True,
+        rotation_range=90,
+        validation_split = 0.2)
 
-    val_dataset = image_dataset_from_directory(
-            path, labels='inferred', label_mode='int',
-            color_mode='rgb', batch_size=32, image_size=(256, 256), shuffle=True, seed=123,
-            validation_split=0.2, subset="validation", interpolation='bilinear', follow_links=False
-            )
+    valid_datagen = ImageDataGenerator(
+        rescale=1./255,
+        validation_split = 0.2)
 
-    print(type(train_dataset))
-    print(type(val_dataset))
+    train_generator = train_datagen.flow_from_directory(
+                    path,
+                    target_size=(256, 256),
+                    batch_size=32,
+                    class_mode='binary',
+                    subset='training',
+                    seed = 123
+                    )
 
-    return (train_dataset, val_dataset)
+    val_generator = valid_datagen.flow_from_directory(
+                        path, # same directory as training data
+                        target_size=(256, 256),
+                        batch_size=32,
+                        class_mode='binary',
+                        subset='validation',
+                        seed = 123)
 
+    return (train_generator, val_generator)
 
-# Cleaning data from original source
-
-def clean_df(df, test=False):
-
-    return df
 
 
 if __name__ == '__main__':
