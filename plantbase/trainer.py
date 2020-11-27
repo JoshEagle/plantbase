@@ -1,9 +1,33 @@
-from plantbase.models import CNN_basic
+from data import get_data
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import csv
+import tensorflow
+import os
+from PIL import Image
+import glob
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.preprocessing import image_dataset_from_directory
+from tensorflow import keras
+from tensorflow.keras.models import Sequential
+from tensorflow.keras import optimizers
+from tensorflow.keras.applications.vgg16 import preprocess_input
+from tensorflow.keras.preprocessing import image_dataset_from_directory
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten, Reshape
+from tensorflow.keras.callbacks import EarlyStopping
+
+
+class Trainer():
 
     ESTIMATOR = 'CNN_basic'
     EXPERIMENT_NAME = 'PlantBaseTrainer'
 
-    def __init__(self, X, Y, **kwargs):
+    def __init__(self, train, val):
+        self.train = train
+        self.val = val
 
     def get_estimator(self):
         estimator = self.kwargs.get('estimator', self.ESTIMATOR)
@@ -26,10 +50,19 @@ from plantbase.models import CNN_basic
         self.set_pipeline = Pipeline(steps=[('rgs', self.get_estimator())])
 
     def train(self):
-        es = EarlyStopping(monitor='val_loss',
-               patience=5,
-               mode='min')
-        history = model.fit(tmp_dataset,
+        self.set_pipeline()
+        es = EarlyStopping(monitor='val_loss', patience=5, mode='min')
+        self.pipeline.fit(training_data = self.train,
+                            validation_data = self.val,
                             callbacks=[es],
                             epochs=100,
                             batch_size=32)
+
+
+if __name__ == '__main__':
+    params = dict()
+    train_val = get_data(**params)
+    train = train_val[0]
+    val = train_val[1]
+    t = Trainer(train=train, val=val, **params)
+    t.train()
