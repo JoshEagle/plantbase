@@ -1,7 +1,6 @@
 from data import get_data
 from utils import get_test_data
 from params import MODEL_VERSION
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26,7 +25,6 @@ from tensorflow.keras.applications.vgg16 import preprocess_input
 from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow.keras.losses
-
 MODEL_DIRECTY = " "  # what is -> must the same as PATH_TO_MODEL inside Makefile
 MLFLOW_URI = " " # needd to update it
 
@@ -123,7 +121,6 @@ class Trainer():
 
         if not self.local:
             storage_upload(model_version=MODEL_VERSION)
-
 
     @memoized_property
     def mlflow_run(self):
