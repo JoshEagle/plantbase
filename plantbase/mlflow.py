@@ -1,7 +1,6 @@
 from data import get_data
 from utils import get_test_data
 from params import MODEL_VERSION
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,6 +11,8 @@ import os
 from PIL import Image
 import glob
 import joblib
+from memoized_property import memoized_property
+from mlflow.tracking import MlflowClient
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline, make_pipeline
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -24,19 +25,21 @@ from tensorflow.keras.applications.vgg16 import preprocess_input
 from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow.keras.losses
-
-MODEL_DIRECTY = "PipelineTest"  # must the same as PATH_TO_MODEL inside Makefile
-MLFLOW_URI = "https://mlflow.lewagon.co/"
+MODEL_DIRECTY = " "  # what is -> must the same as PATH_TO_MODEL inside Makefile
+MLFLOW_URI = " " # needd to update it
 
 class Trainer():
-
     ESTIMATOR = 'CNN_basic'
     EXPERIMENT_NAME = 'PlantBaseTrainer'
 
     def __init__(self, train, val, **kwargs):
+        #self.pipeline = None
         self.train_generator = train_generator
         self.val_generator = val_generator
         self.kwargs = kwargs
+        self.mlflow = kwargs.get("mlflow", False) # if True log info to nlflow
+        self.log_kwargs_params()
+        self.log_machine_specs()
 
 
     def get_estimator(self):
@@ -65,8 +68,9 @@ class Trainer():
             pass
         else:
             pass
-
-        # add in mlflow stuff
+        estimator_params = self.kwargs.get("estimator_params", {})
+        self.mlflow_log_param("estimator", estimator)
+        model.set_params(**estimator_params)
         print(type(model))
         return model
 
@@ -75,6 +79,8 @@ class Trainer():
     #     self.set_pipeline = make_pipeline([self.get_estimator()])
 
     def train(self):
+        tic = time.time()
+        #self.set_pipeline()
         self.model= self.get_estimator()
         es = EarlyStopping(monitor='val_loss', patience=5, mode='min')
         self.model.fit(self.train_generator,
@@ -85,8 +91,11 @@ class Trainer():
                     epochs = 15,
                     #callbacks = [es]
                     )
+        self.mlflow_log_metric("train_time", int(time.time() - tic))
+
 
     def evaluate(self):
+        self.mlflow_log_metric("y_pred", y_pred)
         # get predictions for all species
         X_test, y_true = get_test_data()
         test_df = pd.read_csv("../plantbase/data/test_data.csv").drop(columns = "Unnamed: 0")
@@ -101,6 +110,7 @@ class Trainer():
         # measure success rate
         prediction_review = (y_pred_df['pred_genus'] == y_pred_df['true_genus'])
         accuracy = prediction_review.value_counts()[True] / prediction_review.count()
+        self.mlflow_log_metric("accuracy", accuracy)
         print(f'test accuracy: {accuracy}')
 
     def save_model(self, upload=True, auto_remove=True):
@@ -112,8 +122,7 @@ class Trainer():
         if not self.local:
             storage_upload(model_version=MODEL_VERSION)
 
-
-@memoized_property
+    @memoized_property
     def mlflow_run(self):
         return self.mlflow_client.create_run(self.mlflow_experiment_id)
 
@@ -145,7 +154,10 @@ class Trainer():
         self.mlflow_log_param("cpus", cpus)
 
 if __name__ == '__main__':
-    params = dict()
+    params = dict(
+        mlflow=True,  # set to True to log params to mlflow
+        experiment_name=experiment,
+        )
     train_val = get_data(**params)
     train_generator = train_val[0]
     val_generator = train_val[1]
