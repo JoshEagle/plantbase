@@ -1,7 +1,6 @@
 from data import get_data
 from utils import get_test_data
 from params import MODEL_VERSION
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -29,13 +28,14 @@ import tensorflow.keras.losses
 
 
 MLFLOW_URI = "file:/../plantbase/plantbase/tracking"
+#MODEL_DIRECTY = " "  # what is -> must the same as PATH_TO_MODEL inside Makefile
 
 class Trainer():
-
     ESTIMATOR = 'CNN_basic'
     EXPERIMENT_NAME = 'PlantBaseTrainer'
 
     def __init__(self, train, val, **kwargs):
+        #self.pipeline = None
         self.train_generator = train_generator
         self.val_generator = val_generator
         self.kwargs = kwargs
@@ -44,6 +44,10 @@ class Trainer():
         self.model_params = None
         self.log_kwargs_params()
         self.log_machine_specs()
+        self.mlflow = kwargs.get("mlflow", False) # if True log info to nlflow
+        self.log_kwargs_params()
+        self.log_machine_specs()
+
 
     def get_estimator(self):
         estimator = self.kwargs.get('estimator', self.ESTIMATOR)
@@ -85,6 +89,7 @@ class Trainer():
     @simple_time_tracker
     def train(self):
         tic = time.time()
+        #self.set_pipeline()
         self.model= self.get_estimator()
         es = EarlyStopping(monitor='val_loss', patience=5, mode='min')
         self.model.fit(self.train_generator,
@@ -98,6 +103,7 @@ class Trainer():
         self.mlflow_log_metric("train_time", int(time.time() - tic))
 
     def evaluate(self):
+        self.mlflow_log_metric("y_pred", y_pred)
         # get predictions for all species
         X_test, y_true = get_test_data()
         test_df = pd.read_csv("../plantbase/data/test_data.csv").drop(columns = "Unnamed: 0")
@@ -171,6 +177,7 @@ class Trainer():
 if __name__ == '__main__':
     params = dict(
         mlflow=True,  # set to True to log params to mlflow
+        experiment_name=experiment,
         )
     train_val = get_data(**params)
     train_generator = train_val[0]
