@@ -12,6 +12,8 @@ import os
 from PIL import Image
 import glob
 import joblib
+from memoized_property import memoized_property
+from mlflow.tracking import MlflowClient
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline, make_pipeline
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -25,8 +27,8 @@ from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow.keras.losses
 
-MODEL_DIRECTY = "PipelineTest"  # must the same as PATH_TO_MODEL inside Makefile
-MLFLOW_URI = "https://mlflow.lewagon.co/"
+
+MLFLOW_URI = "file:/../plantbase/plantbase/tracking"
 
 class Trainer():
 
@@ -37,7 +39,11 @@ class Trainer():
         self.train_generator = train_generator
         self.val_generator = val_generator
         self.kwargs = kwargs
-
+        self.mlflow = kwargs.get("mlflow", False)  # if True log info to nlflow
+        self.experiment_name = kwargs.get("experiment_name", self.EXPERIMENT_NAME)  # cf doc above
+        self.model_params = None
+        self.log_kwargs_params()
+        self.log_machine_specs()
 
     def get_estimator(self):
         estimator = self.kwargs.get('estimator', self.ESTIMATOR)
@@ -66,7 +72,9 @@ class Trainer():
         else:
             pass
 
-        # add in mlflow stuff
+        estimator_params = self.kwargs.get("estimator_params", {})
+        self.mlflow_log_param("estimator", estimator)
+        model.set_params(**estimator_params)
         print(type(model))
         return model
 
@@ -74,7 +82,9 @@ class Trainer():
     # def set_pipeline(self):
     #     self.set_pipeline = make_pipeline([self.get_estimator()])
 
+    @simple_time_tracker
     def train(self):
+        tic = time.time()
         self.model= self.get_estimator()
         es = EarlyStopping(monitor='val_loss', patience=5, mode='min')
         self.model.fit(self.train_generator,
@@ -85,13 +95,14 @@ class Trainer():
                     epochs = 15,
                     #callbacks = [es]
                     )
+        self.mlflow_log_metric("train_time", int(time.time() - tic))
 
     def evaluate(self):
         # get predictions for all species
         X_test, y_true = get_test_data()
         test_df = pd.read_csv("../plantbase/data/test_data.csv").drop(columns = "Unnamed: 0")
         y_pred = self.model.predict(X_test)
-
+        self.mlflow_log_metric("y_pred", y_pred)
         y_pred_df = pd.DataFrame(y_pred, columns=np.sort(test_df.genus.unique()))
 
         # get species with top prediction and true species
@@ -101,6 +112,7 @@ class Trainer():
         # measure success rate
         prediction_review = (y_pred_df['pred_genus'] == y_pred_df['true_genus'])
         accuracy = prediction_review.value_counts()[True] / prediction_review.count()
+        self.mlflow_log_metric("accuracy", accuracy)
         print(f'test accuracy: {accuracy}')
 
     def save_model(self, upload=True, auto_remove=True):
@@ -112,8 +124,20 @@ class Trainer():
         if not self.local:
             storage_upload(model_version=MODEL_VERSION)
 
+ ### MLFlow methods
+    @memoized_property
+    def mlflow_client(self): # define where results are stored
+        mlflow.set_tracking_uri(MLFLOW_URI)
+        return MlflowClient()
 
-@memoized_property
+    @memoized_property
+    def mlflow_experiment_id(self): #if the experiments is not defined its creates name
+        try:
+            return self.mlflow_client.create_experiment(self.experiment_name)
+        except BaseException:
+            return self.mlflow_client.get_experiment_by_name(self.experiment_name).experiment_id
+
+    @memoized_property
     def mlflow_run(self):
         return self.mlflow_client.create_run(self.mlflow_experiment_id)
 
@@ -145,7 +169,9 @@ class Trainer():
         self.mlflow_log_param("cpus", cpus)
 
 if __name__ == '__main__':
-    params = dict()
+    params = dict(
+        mlflow=True,  # set to True to log params to mlflow
+        )
     train_val = get_data(**params)
     train_generator = train_val[0]
     val_generator = train_val[1]
@@ -154,6 +180,6 @@ if __name__ == '__main__':
     t.train()
     print("############  Evaluating model ############")
     t.evaluate()
-    # print("############   Saving model    ############", "green")
-    # t.save_model()
+    print("############   Saving model    ############", "green")
+    t.save_model()
 
