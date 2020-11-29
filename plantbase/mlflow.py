@@ -25,8 +25,10 @@ from tensorflow.keras.applications.vgg16 import preprocess_input
 from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow.keras.losses
-MODEL_DIRECTY = " "  # what is -> must the same as PATH_TO_MODEL inside Makefile
-MLFLOW_URI = " " # needd to update it
+
+
+MLFLOW_URI = "file:/../plantbase/plantbase/tracking"
+#MODEL_DIRECTY = " "  # what is -> must the same as PATH_TO_MODEL inside Makefile
 
 class Trainer():
     ESTIMATOR = 'CNN_basic'
@@ -37,6 +39,11 @@ class Trainer():
         self.train_generator = train_generator
         self.val_generator = val_generator
         self.kwargs = kwargs
+        self.mlflow = kwargs.get("mlflow", False)  # if True log info to nlflow
+        self.experiment_name = kwargs.get("experiment_name", self.EXPERIMENT_NAME)  # cf doc above
+        self.model_params = None
+        self.log_kwargs_params()
+        self.log_machine_specs()
         self.mlflow = kwargs.get("mlflow", False) # if True log info to nlflow
         self.log_kwargs_params()
         self.log_machine_specs()
@@ -68,6 +75,7 @@ class Trainer():
             pass
         else:
             pass
+
         estimator_params = self.kwargs.get("estimator_params", {})
         self.mlflow_log_param("estimator", estimator)
         model.set_params(**estimator_params)
@@ -78,6 +86,7 @@ class Trainer():
     # def set_pipeline(self):
     #     self.set_pipeline = make_pipeline([self.get_estimator()])
 
+    @simple_time_tracker
     def train(self):
         tic = time.time()
         #self.set_pipeline()
@@ -93,14 +102,13 @@ class Trainer():
                     )
         self.mlflow_log_metric("train_time", int(time.time() - tic))
 
-
     def evaluate(self):
         self.mlflow_log_metric("y_pred", y_pred)
         # get predictions for all species
         X_test, y_true = get_test_data()
         test_df = pd.read_csv("../plantbase/data/test_data.csv").drop(columns = "Unnamed: 0")
         y_pred = self.model.predict(X_test)
-
+        self.mlflow_log_metric("y_pred", y_pred)
         y_pred_df = pd.DataFrame(y_pred, columns=np.sort(test_df.genus.unique()))
 
         # get species with top prediction and true species
@@ -121,6 +129,19 @@ class Trainer():
 
         if not self.local:
             storage_upload(model_version=MODEL_VERSION)
+
+ ### MLFlow methods
+    @memoized_property
+    def mlflow_client(self): # define where results are stored
+        mlflow.set_tracking_uri(MLFLOW_URI)
+        return MlflowClient()
+
+    @memoized_property
+    def mlflow_experiment_id(self): #if the experiments is not defined its creates name
+        try:
+            return self.mlflow_client.create_experiment(self.experiment_name)
+        except BaseException:
+            return self.mlflow_client.get_experiment_by_name(self.experiment_name).experiment_id
 
     @memoized_property
     def mlflow_run(self):
@@ -166,6 +187,6 @@ if __name__ == '__main__':
     t.train()
     print("############  Evaluating model ############")
     t.evaluate()
-    # print("############   Saving model    ############", "green")
-    # t.save_model()
+    print("############   Saving model    ############", "green")
+    t.save_model()
 
