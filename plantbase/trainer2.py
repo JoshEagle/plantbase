@@ -1,6 +1,8 @@
 from data import get_data
-from utils import get_test_data
+from utils import get_test_data, simple_time_tracker
 from params import MODEL_VERSION
+import multiprocessing
+import time
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,9 +13,10 @@ import os
 from PIL import Image
 import glob
 import joblib
-import mlflow
+import mlflow #make sure file name is different than mlflow
 from memoized_property import memoized_property
 from mlflow.tracking import MlflowClient
+from psutil import virtual_memory
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline, make_pipeline
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -26,13 +29,14 @@ from tensorflow.keras.applications.vgg16 import preprocess_input
 from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow.keras.losses
+from termcolor import colored
 
-MLFLOW_URI = "file:/../plantbase/plantbase/tracking"
+MLFLOW_URI = "https://mlflow.lewagon.co/"
 #MODEL_DIRECTY = " "  # what is -> must the same as PATH_TO_MODEL inside Makefile
 
 class Trainer():
     ESTIMATOR = 'CNN_basic'
-    EXPERIMENT_NAME = 'PlantBaseTrainer'
+    EXPERIMENT_NAME = 'GB_475_PLANTBASE'
 
     def __init__(self, train, val, **kwargs):
         #self.pipeline = None
@@ -45,8 +49,6 @@ class Trainer():
         self.log_kwargs_params()
         self.log_machine_specs()
         self.mlflow = kwargs.get("mlflow", False) # if True log info to nlflow
-        self.log_kwargs_params()
-        self.log_machine_specs()
 
 
     def get_estimator(self):
@@ -79,7 +81,7 @@ class Trainer():
         estimator_params = self.kwargs.get("estimator_params", {})
         self.mlflow_log_param("estimator", estimator)
         model.set_params(**estimator_params)
-        print(type(model))
+        print(colored(model.__class__.__name__, "red"))
         return model
 
 
@@ -125,15 +127,15 @@ class Trainer():
         """Save the model into a .joblib and upload it on Google Storage /models folder
         HINTS : use sklearn.joblib (or jbolib) libraries and google-cloud-storage"""
         joblib.dump(self.model, 'model.joblib')
-        print("model.joblib saved locally", "green")
+        print(colored("model.joblib saved locally", "green"))
 
         if not self.local:
             storage_upload(model_version=MODEL_VERSION)
 
  ### MLFlow methods
     @memoized_property
-    def mlflow_client(self): # define where results are stored
-        mlflow.set_tracking_uri(MLFLOW_URI)
+    def mlflow_client(self): # define where results are
+
         return MlflowClient()
 
     @memoized_property
@@ -175,6 +177,9 @@ class Trainer():
         self.mlflow_log_param("cpus", cpus)
 
 if __name__ == '__main__':
+    experiment = "plantbase_set_YOURNAME"
+    if "YOURNAME" in experiment:
+        print(colored("Please define MlFlow experiment variable with your own name", "red"))
     params = dict(
         mlflow=True,  # set to True to log params to mlflow
         experiment_name=experiment,
