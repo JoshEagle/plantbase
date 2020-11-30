@@ -12,6 +12,7 @@ import os
 from PIL import Image
 import glob
 import joblib
+import mlflow
 from memoized_property import memoized_property
 from mlflow.tracking import MlflowClient
 from sklearn.model_selection import train_test_split
@@ -27,8 +28,8 @@ from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow.keras.losses
 
-MODEL_DIRECTY = " "  # what is -> must the same as PATH_TO_MODEL inside Makefile
-MLFLOW_URI = " " # needd to update it
+#MODEL_DIRECTY = " "  # what is -> must the same as PATH_TO_MODEL inside Makefile
+MLFLOW_URI = "file:/../plantbase/plantbase/tracking" # needd to update it
 
 class Trainer():
     ESTIMATOR = 'CNN_basic'
