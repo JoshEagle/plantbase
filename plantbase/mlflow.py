@@ -11,6 +11,7 @@ import os
 from PIL import Image
 import glob
 import joblib
+import mlflow
 from memoized_property import memoized_property
 from mlflow.tracking import MlflowClient
 from sklearn.model_selection import train_test_split
@@ -25,7 +26,6 @@ from tensorflow.keras.applications.vgg16 import preprocess_input
 from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow.keras.losses
-
 
 MLFLOW_URI = "file:/../plantbase/plantbase/tracking"
 #MODEL_DIRECTY = " "  # what is -> must the same as PATH_TO_MODEL inside Makefile
