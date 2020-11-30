@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/User/code/Joshymitzu/plantbase/plantbase/mlruns/1/e475df3d14c048808867a1039a2a0353/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+name: ''
+run_id: e475df3d14c048808867a1039a2a0353
+run_uuid: e475df3d14c048808867a1039a2a0353
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1606750887447
+status: 1
+tags: []
+user_id: unknown
