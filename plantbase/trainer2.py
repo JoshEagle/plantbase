@@ -78,9 +78,9 @@ class Trainer():
         else:
             pass
 
-        estimator_params = self.kwargs.get("estimator_params", {})
-        self.mlflow_log_param("estimator", estimator)
-        model.set_params(**estimator_params)
+        # estimator_params = self.kwargs.get("estimator_params", 'CNN_basic')
+        # self.mlflow_log_param("estimator", estimator)
+        #model.set_params(**estimator_params)
         print(colored(model.__class__.__name__, "red"))
         return model
 
@@ -105,12 +105,14 @@ class Trainer():
         self.mlflow_log_metric("train_time", int(time.time() - tic))
 
     def evaluate(self):
-        self.mlflow_log_metric("y_pred", y_pred)
+        #self.mlflow_log_metric("y_pred", y_pred)
         # get predictions for all species
         X_test, y_true = get_test_data()
         test_df = pd.read_csv("../plantbase/data/test_data.csv").drop(columns = "Unnamed: 0")
         y_pred = self.model.predict(X_test)
         self.mlflow_log_metric("y_pred", y_pred)
+        estimator_params = self.kwargs.get("estimator_params", 'CNN_basic')
+        self.mlflow_log_param("estimator", estimator)
         y_pred_df = pd.DataFrame(y_pred, columns=np.sort(test_df.genus.unique()))
 
         # get species with top prediction and true species
