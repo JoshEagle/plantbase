@@ -20,4 +20,4 @@ mlflow
 six==1.13.0
 google-cloud-storage
 multiprocessing
-virtual_memory
+psutil
