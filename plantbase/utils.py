@@ -28,6 +28,25 @@ def get_test_data():
 
     return X_test, y_true
 
+################
+#  DECORATORS  #
+################
+
+def simple_time_tracker(method):
+    def timed(*args, **kw):
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+        if 'log_time' in kw:
+            name = kw.get('log_name', method.__name__.upper())
+            kw['log_time'][name] = int((te - ts))
+        else:
+            print(method.__name__, round(te - ts, 2))
+        return result
+
+    return timed
+
+
 
 # def compute_success_ratio():
 #     y_pred = model.predict(X_test)
@@ -48,25 +67,3 @@ def get_test_data():
 #     return success_ratio
 
 
-
-
-
-
-
-# Decorators below:
-
-
-def simple_time_tracker(method):
-
-    def timed(*args, **kwargs):
-        ts = time.time()
-        result = method(*args, **kwargs)
-        te = time.time()
-        if 'log_time' in kwargs:
-            name = kwargs.get('log_name', method.__name__.upper())
-            kwargs['log_time'][name] = int((te - ts))
-        else:
-            print(method.__name__, round(te - ts, 2))
-        return result
-
-    return timed
