@@ -5,9 +5,11 @@ import pytz
 import streamlit as st
 import numpy as np
 from PIL import Image
+import streamlit.components.v1 as components
 from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
+
 
 #page layout
 # def local_css(file_name): # taking values from app_style folder
@@ -17,8 +19,7 @@ from tensorflow.keras.models import load_model
 #         local_css("style.css")
 
 #care and plants info import
-# plants_care = pd.read_csv('plants/scraping/plants_info.csv')
-# plants_images_info = pd.read_csv('priority_plants_VF.csv')
+plants_care = pd.read_csv('plantbase/scraping/plant_info_wk2.csv')
 
 # Page formatting and image display
 
@@ -77,14 +78,14 @@ st.write("")
 
 
  #add button click here to confirm
-def button
+
 if st.button('My plant'):
     result = add(1, 2)
     st.write('result: %s' % result)
 
 # show image of choosen flower
 
- st.subheader(f"**Your plant name is{plants_care['Species'].iloc[0]}**")
+#st.subheader(f"**Your plant name is{plants_care['Species'].iloc[0]}**")
 st.write('')
 st.write('')
 st.write("")
@@ -99,12 +100,9 @@ st.subheader("Here is something you did not know about your flower...")
 
 st.write('')
 st.subheader("***How to grow your plant***")
-st.subheader("Cultivation")
 
-def wrapper(self)
 
-#add wrapper
-#st.write(plants_care['How to grow_Cultivation'].to_string())
+Cultivation = st.write(plants_care['Cultivation'].to_string())
 
 st.subheader("Propagation")
 #add wrapper
@@ -127,56 +125,28 @@ st.subheader("Diseases")
 #st.write(plants_care['How to care_Diseases'].to_string())
 
 
-
-#-----------------------------------
-
-    # load model and predict
-    # reconstructed_model = load_model('./model/cnn_1_ak/')
-    # y_pred = reconstructed_model.predict(X)
-
-    # rename_columns = {0: 'Ajuga',
-    #              1: 'Allium',
-    #              2: 'Campanula',
-    #              3: 'Cirsium',
-    #              4: 'Crataegus',
-    #              5: 'Gentiana',
-    #              6: 'Geranium',
-    #              7: 'Iris',
-    #              8: 'Malva',
-    #              9: 'Narcissus',
-    #              10: 'Ophrys',
-    #              11: 'Rosa',
-    #              12: 'Trifolium',
-    #              13: 'Verbascum',
-    #              14: 'Veronica',
-    #              15: 'Viola'}
-
-    # y_pred_df = pd.DataFrame(y_pred_recon, columns = rename_columns)
-    # output = y_pred_recon_df.idxmax(axis=1)[0]
-    # st.write(output)
-    # transpose = y_pred_recon_df.T
-
-
-
-
-# not used code
-# st.markdown('**Please describe the room conditions for the plant**')
-
-# display = ("Click me",
-#            "Little sun",
-#            "Medium sun",
-#            "Full sun")
-
-# options = list(range(len(display)))
-# value_light = st.selectbox("How much sun will the plant have?", options, format_func=lambda x: display[x])
-
-# st.write("")
-# st.write("")
-
-# display = ("Click me, too",
-#           "Once a month (Little)",
-#           "Twice a month (Sometimes)",
-#            "Once a week (Often)",
-#             "Twice a week (Very often)")
-# options = list(range(len(display)))
-# value_water = st.selectbox("How often will you be able to water the plant?", options, format_func=lambda x: display[x])
+# bootstrap 4 collapse example
+components.html(
+    """
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <div id="accordion">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            Cultivation
+            </button>
+          </h5>
+        </div>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+          <div class="card-body">
+           st.write(plants_care['Cultivation'].to_string())
+          </div>
+        </div>
+      </div>
+    </div>
+    """,
+    height=600,
+)
