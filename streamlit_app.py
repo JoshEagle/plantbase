@@ -17,16 +17,17 @@ from tensorflow.keras.models import load_model
 #         local_css("style.css")
 
 #care and plants info import
-# plants_care = pd.read_csv('plants/scraping/plants_info.csv')
-# plants_images_info = pd.read_csv('priority_plants_VF.csv')
+plants_care = pd.read_csv('plants/scraping/plants_info.csv')
+#plants_images_info = pd.read_csv('priority_plants_VF.csv')
 
 # Page formatting and image display
-
+#@st.cashe
+#def read logo(n_)
 st.set_option('deprecation.showfileUploaderEncoding', False)
 st.markdown("<h1 style='text-align: left; color: red;'img/h1>", unsafe_allow_html=True)
 img = st.image('plantbase/data/plantbase_logo.png', width=200, output_format='png') #exchange logo for something else?
 
-st.title("PlantBase")
+st.title("#PlantBase")
 
 st.write('')
 st.markdown("### Welcome to PlantBase, your best friend in growing outdoors shrub")
@@ -60,6 +61,7 @@ if uploaded_file is not None:
     st.write(f"{type(X)}")
     st.write(f"{X_list}")
     st.write(f"X shape is {X.shape} ")
+
 #-----------------------
 
 # code for load & model prediction
@@ -75,16 +77,20 @@ st.write('')
 st.write("")
  # Show prediction results
 
+if st.button('This is My plant'):
+    st.write('plant name') # add plant name
+# else:
+#     st.write('Goodbye')
 
  #add button click here to confirm
-def button
-if st.button('My plant'):
-    result = add(1, 2)
-    st.write('result: %s' % result)
+# def button
+# if st.button('My plant'):
+#     result = add(1, 2)
+#     st.write('result: %s' % result)
 
 # show image of choosen flower
 
- st.subheader(f"**Your plant name is{plants_care['Species'].iloc[0]}**")
+#st.subheader(f"**Your plant name is{plants_care['Species'].iloc[0]}**")
 st.write('')
 st.write('')
 st.write("")
@@ -101,7 +107,7 @@ st.write('')
 st.subheader("***How to grow your plant***")
 st.subheader("Cultivation")
 
-def wrapper(self)
+#def wrapper(self)
 
 #add wrapper
 #st.write(plants_care['How to grow_Cultivation'].to_string())
