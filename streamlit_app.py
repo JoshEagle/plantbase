@@ -9,6 +9,7 @@ from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 
+
 #page layout
 # def local_css(file_name): # taking values from app_style folder
 #     with open(file_name) as f:
@@ -17,8 +18,8 @@ from tensorflow.keras.models import load_model
 #         local_css("style.css")
 
 #care and plants info import
-# plants_care = pd.read_csv('plants/scraping/plants_info.csv')
-# plants_images_info = pd.read_csv('priority_plants_VF.csv')
+plants_care = pd.read_csv('plants/scraping/plant_info_wk2.csv')
+#plants_images_info = pd.read_csv('priority_plants_VF.csv')
 
 # Page formatting and image display
 
