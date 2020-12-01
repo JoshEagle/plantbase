@@ -17,7 +17,7 @@ from tensorflow.keras.models import load_model
 #         local_css("style.css")
 
 #care and plants info import
-# plants_care = pd.read_csv('plants_info_enhanced.csv')
+# plants_care = pd.read_csv('plants/scraping/plants_info.csv')
 # plants_images_info = pd.read_csv('priority_plants_VF.csv')
 
 # Page formatting and image display
@@ -75,45 +75,57 @@ st.write('')
 st.write("")
  # Show prediction results
 
- #click here to confirm
-def
+
+ #add button click here to confirm
+def button
 if st.button('My plant'):
     result = add(1, 2)
     st.write('result: %s' % result)
 
 # show image of choosen flower
- st.subheader(f"**Your plant name is{plants_care['Species'].iloc[0]}**")
 
+ st.subheader(f"**Your plant name is{plants_care['Species'].iloc[0]}**")
 st.write('')
 st.write('')
 st.write("")
 
 st.write('')
 st.subheader("Here is something you did not know about your flower...")
-st.write(plants_care['Genus description'].to_string())
-st.write(plants_care['Genus details'].to_string())
+#add wrapper
+# st.write(plants_care['Genus description'].to_string())
+# st.write(plants_care['Genus details'].to_string())
+
 
 
 st.write('')
 st.subheader("***How to grow your plant***")
 st.subheader("Cultivation")
-st.write(plants_care['How to grow_Cultivation'].to_string())
+
+def wrapper(self)
+
+#add wrapper
+#st.write(plants_care['How to grow_Cultivation'].to_string())
 
 st.subheader("Propagation")
-st.write(plants_care['How to grow_ Propogation'].to_string())
+#add wrapper
+#st.write(plants_care['How to grow_ Propogation'].to_string())
 
 st.subheader("Where to plant")
-st.write(plants_care['How to grow_ Suggested planting locations and garden types'].to_string())
+#add wrapper
+#st.write(plants_care['How to grow_ Suggested planting locations and garden types'].to_string())
 
 st.subheader("Pruning")
-st.write(plants_care['How to care_ Pruning'].to_string())
+#add wrapper
+#st.write(plants_care['How to care_ Pruning'].to_string())
 
 st.subheader("Pests")
-st.write(plants_care['How to care_Pests'].to_string())
+#add wrapper
+#st.write(plants_care['How to care_Pests'].to_string())
 
 st.subheader("Diseases")
+#add wrapper
+#st.write(plants_care['How to care_Diseases'].to_string())
 
-st.write(plants_care['How to care_Diseases'].to_string())
 
 
 #-----------------------------------
