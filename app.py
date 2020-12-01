@@ -34,6 +34,7 @@ if uploaded_file is not None:
     # y_pred = joblib_model.predict(X)
 
     #load model and predict with tensorflow load_model
+    #reconstructed_model = load_model('./model/cnn_1_ak')
     reconstructed_model = load_model('/home/jupyter/saved_models/josh_vgg_v2')
     y_pred = reconstructed_model.predict(X)
     # key for renaming columns
