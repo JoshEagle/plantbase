@@ -75,6 +75,7 @@ st.write('')
 st.write("")
  # Show prediction results
 
+
  #add button click here to confirm
 def button
 if st.button('My plant'):
@@ -82,8 +83,8 @@ if st.button('My plant'):
     st.write('result: %s' % result)
 
 # show image of choosen flower
- # st.subheader(f"**Your plant name is{plants_care['Species'].iloc[0]}**")
 
+ st.subheader(f"**Your plant name is{plants_care['Species'].iloc[0]}**")
 st.write('')
 st.write('')
 st.write("")
@@ -93,6 +94,7 @@ st.subheader("Here is something you did not know about your flower...")
 #add wrapper
 # st.write(plants_care['Genus description'].to_string())
 # st.write(plants_care['Genus details'].to_string())
+
 
 
 st.write('')
@@ -123,6 +125,7 @@ st.subheader("Pests")
 st.subheader("Diseases")
 #add wrapper
 #st.write(plants_care['How to care_Diseases'].to_string())
+
 
 
 #-----------------------------------
