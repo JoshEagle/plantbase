@@ -52,41 +52,32 @@ if uploaded_file is not None:
     X_list.append(img)
     X = np.stack(X_list, axis = 0)
 
-    #Delete here
-#-------------------------------
-    # st.write(f"{X}")
-    # st.write(f"{type(X)}")
-    # st.write(f"{X_list}")
-    # st.write(f"X shape is {X.shape} ")
-#-------------------------------------------
-
-
     #load model and predict with tensorflow load_model
-    # reconstructed_model = load_model('./model/cnn_1_ak')
-    # y_pred = reconstructed_model.predict(X)
-    # # key for renaming columns
-    # rename_columns = {0: 'Ajuga',
-    #              1: 'Allium',
-    #              2: 'Campanula',
-    #              3: 'Cirsium',
-    #              4: 'Crataegus',
-    #              5: 'Gentiana',
-    #              6: 'Geranium',
-    #              7: 'Iris',
-    #              8: 'Malva',
-    #              9: 'Narcissus',
-    #              10: 'Ophrys',
-    #              11: 'Rosa',
-    #              12: 'Trifolium',
-    #              13: 'Verbascum',
-    #              14: 'Veronica',
-    #              15: 'Viola'}
-    # # convert pred to dataframe with names columns
-    # y_pred_df = pd.DataFrame(y_pred)
-    # y_pred_df = y_pred_df.rename(columns = rename_columns)
-    # st.write(y_pred_df)
-    # output = y_pred_df.idxmax(axis=1)[0]
-    # st.write(output)
+    reconstructed_model = load_model('/home/jupyter/saved_models/josh_vgg_v2')
+    y_pred = reconstructed_model.predict(X)
+    # key for renaming columns
+    rename_columns = {0: 'Ajuga',
+                 1: 'Allium',
+                 2: 'Campanula',
+                 3: 'Cirsium',
+                 4: 'Crataegus',
+                 5: 'Gentiana',
+                 6: 'Geranium',
+                 7: 'Iris',
+                 8: 'Malva',
+                 9: 'Narcissus',
+                 10: 'Ophrys',
+                 11: 'Rosa',
+                 12: 'Trifolium',
+                 13: 'Verbascum',
+                 14: 'Veronica',
+                 15: 'Viola'}
+    # convert pred to dataframe with names columns
+    y_pred_df = pd.DataFrame(y_pred)
+    y_pred_df = y_pred_df.rename(columns = rename_columns)
+    st.write(y_pred_df)
+    plant_name = y_pred_df.idxmax(axis=1)[0]
+    st.write(plant_name)
     # transpose = y_pred_df.T
     # plant_info = plants_info_df[plants_info_df.genus.str.contains(output)]
 
@@ -114,13 +105,13 @@ if st.button('This is NOT my plant'):
 
 # show image of choosen flower
 
-name= st.subheader(f"**Your plant name is {plants_care['Genus name'].iloc[0]}**")
+name= st.subheader(f"**Your plant name is {plant_name}**")
 st.write('')
 
 
 plant_features= ['Genus','Details', 'Cultivation', 'Propagation', 'Suggested planting locations and garden types', 'Pruning', 'Pests', 'Diseases ']
 
-plant_name= plants_care['Genus name'].iloc[0] # this plant name has to be here otherwise code is crushing with error UnboundLocalError: local variable referenced before assignment
+plant_name= plant_name # this plant name has to be here otherwise code is crushing with error UnboundLocalError: local variable referenced before assignment
 
 def how_to_grow(plant_name, plants_care, plant_features):
     if plant_name in list(plants_care['Genus name']):
