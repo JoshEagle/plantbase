@@ -1,6 +1,6 @@
 applicable_date,weather_state_name,min_temp,max_temp,wind_speed
-2020-12-02,Showers,3.0,7.0,4.0
-2020-12-03,Heavy Rain,4.0,7.0,5.0
-2020-12-04,Light Rain,2.0,5.0,7.0
-2020-12-05,Showers,1.0,5.0,5.0
-2020-12-06,Light Rain,1.0,4.0,5.0
+Thu 2 Jan 2020,Showers,3 C,7 C,4 mph
+Fri 3 Jan 2020,Heavy Rain,4 C,7 C,5 mph
+Sat 4 Jan 2020,Heavy Rain,2 C,5 C,7 mph
+Sun 5 Jan 2020,Heavy Cloud,1 C,5 C,5 mph
+Mon 6 Jan 2020,Light Rain,1 C,4 C,5 mph
