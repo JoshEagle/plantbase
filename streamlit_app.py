@@ -170,6 +170,6 @@ st.markdown("<h1 style='text-align: left; color: green;'>London 5 day weather fo
 weather = pd.read_csv('plantbase/weather_API/44418-today.csv')
 weather_st = st.dataframe(weather)
 
-data=[weather[['min_temp','max_temp']]for key in weather]
+# data=[weather[['min_temp','max_temp']]for key in weather]
 
-st.area_chart(data=data)
+# st.area_chart(data=data)
