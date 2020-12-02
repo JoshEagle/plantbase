@@ -44,15 +44,16 @@ uploaded_file = st.file_uploader('', type=("png", "jpg"))
 if uploaded_file is not None:
     # load and preprocess the image
     img = Image.open(uploaded_file)
-    img = img.resize((224,224))
     st.image(img, caption='Uploaded Image.', use_column_width=True)
     st.write("")
+    img = img.resize((224,224))
     img = img_to_array(img)
     X_list = []
     X_list.append(img)
     X = np.stack(X_list, axis = 0)
 
-    #load model and predict with tensorflow load_model
+    # load model and predict with tensorflow load_model
+    # local_model = load_model('model/cnn_1_ak')
     reconstructed_model = load_model('/home/jupyter/saved_models/josh_vgg_v2')
     y_pred = reconstructed_model.predict(X)
     # key for renaming columns
@@ -75,13 +76,27 @@ if uploaded_file is not None:
     # convert pred to dataframe with names columns
     y_pred_df = pd.DataFrame(y_pred)
     y_pred_df = y_pred_df.rename(columns = rename_columns)
-    st.write(y_pred_df)
+    #st.write(y_pred_df)
     plant_name = y_pred_df.idxmax(axis=1)[0]
     st.write(plant_name)
 
 #-----------------------
 
+    # if user doesn't think this is their plant:
+    cnn_model = load_model('/home/jupyter/saved_models/augmented_basic_cnn')
+    cnn_pred = cnn_model.predict(X)
+    cnn_pred_df = pd.DataFrame(cnn_preds, columns=np.sort(test_df.genus.unique()))
+    cnn_top_3 =pd.DataFrame(cnn_pred_df.apply(lambda x:list(cnn_pred_df.columns[np.array(x).argsort()[::-1][:3]]), axis=1).to_list(),  columns=['Top1', 'Top2', 'Top3'])
+    if cnn_top_3['Top1'] != plant_name:
+        pred2 = cnn_top_3['Top1']
+        if cnn_top_3['Top2'] != plant_name:
+            pred3 = cnn_top_3['Top2']
+    else:
+        pred2 = cnn_top_3['Top2']
+        pred3 = cnn_top_3['Top3']
 
+    st.write(pred2)
+    st.write(pred3)
     #code to show 3 top predictions
 
     # st.write('')
@@ -99,14 +114,14 @@ if uploaded_file is not None:
 
     # show image of choosen flower
 
-    #name= st.subheader(f"**Your plant name is {plant_name}**")
+    name= st.subheader(f"**Your plant name is {plant_name}**")
     st.write('')
-    name = st.subheader(f"**Your plant name is {plants_care['Genus name'].iloc[0]}**")
+    # name = st.subheader(f"**Your plant name is {plants_care['Genus name'].iloc[0]}**")
 
     plant_features= ['Genus','Details', 'Cultivation', 'Propagation', 'Suggested planting locations and garden types', 'Pruning', 'Pests', 'Diseases ']
 
     #plant_name= plant_name # this plant name has to be here otherwise code is crushing with error UnboundLocalError: local variable referenced before assignment
-    plant_name = plants_care['Genus name'].iloc[0] # only for internal testing
+    # plant_name = plants_care['Genus name'].iloc[0] # only for internal testing
     # plant_folders = ('plantbase/raw_data/train')
 
     # def plant_image(plant_folders)
