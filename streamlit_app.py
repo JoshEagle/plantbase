@@ -122,6 +122,21 @@ plant_features= ['Genus','Details', 'Cultivation', 'Propagation', 'Suggested pla
 
 plant_name= plants_care['Genus name'].iloc[0] # this plant name has to be here otherwise code is crushing with error UnboundLocalError: local variable referenced before assignment
 
+path = ('plantbase/data/plant_examples')
+
+for file in os.listdir(path):
+    if plant_name in file:
+        plant1= Image.open(f'plantbase/data/plant_examples/{plant_name}.jpg')
+        plant2= Image.open(f'plantbase/data/plant_examples/{file}')
+        plant1.resize((224,224))
+        plant2.resize((224,224))
+
+st.image([plant1,plant2], width=100)
+
+
+path = ('plantbase/data/plant_examples')
+
+
 def how_to_grow(plant_name, plants_care, plant_features):
     if plant_name in list(plants_care['Genus name']):
         feature = plants_care.iloc[plants_care.index[plants_care['Genus name'] == plant_name]][plant_features].iloc[0]
