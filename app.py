@@ -84,9 +84,9 @@ if uploaded_file is not None:
 
     # if user doesn't think this is their plant:
     cnn_model = load_model('/home/jupyter/saved_models/augmented_basic_cnn')
-    cnn_pred = cnn_model.predict(X)
-    cnn_pred_df = pd.DataFrame(cnn_preds, columns=np.sort(test_df.genus.unique()))
-    cnn_top_3 =pd.DataFrame(cnn_pred_df.apply(lambda x:list(cnn_pred_df.columns[np.array(x).argsort()[::-1][:3]]), axis=1).to_list(),  columns=['Top1', 'Top2', 'Top3'])
+    cnn_preds = cnn_model.predict(X)
+    cnn_preds_df = pd.DataFrame(cnn_preds, columns=np.sort(test_df.genus.unique()))
+    cnn_top_3 =pd.DataFrame(cnn_preds_df.apply(lambda x:list(cnn_preds_df.columns[np.array(x).argsort()[::-1][:3]]), axis=1).to_list(),  columns=['Top1', 'Top2', 'Top3'])
     if cnn_top_3['Top1'] != plant_name:
         pred2 = cnn_top_3['Top1']
         if cnn_top_3['Top2'] != plant_name:
