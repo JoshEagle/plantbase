@@ -87,6 +87,8 @@ if uploaded_file is not None:
     cnn_preds = cnn_model.predict(X)
     cnn_preds_df = pd.DataFrame(cnn_preds, columns=rename_columns)
     cnn_top_3 =pd.DataFrame(cnn_preds_df.apply(lambda x:list(cnn_preds_df.columns[np.array(x).argsort()[::-1][:3]]), axis=1).to_list(),  columns=['Top1', 'Top2', 'Top3'])
+    st.write(cnn_top_3)
+    st.write(f"cnn top prediction: {cnn_top_3['Top1']}")
     if cnn_top_3['Top1'] != plant_name:
         pred2 = cnn_top_3['Top1']
         if cnn_top_3['Top2'] != plant_name:
