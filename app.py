@@ -1,40 +1,59 @@
 import joblib
 import pandas as pd
+import os
 import pytz
 import streamlit as st
 import numpy as np
 from PIL import Image
+import streamlit.components.v1 as components
 from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 
-# import csvs
-#plants_full_info_df = pd.read_csv('data/XXX.csv)
-st.header("PlantBase")
-st.markdown("### A deep learning project to classify plant images and return plant care advice")
-st.header("Please upload an image of the flower you would like to identify")
-st.markdown("### The app works best when the picture is of the actual flower of the plant, rather than leaves or stem")
-uploaded_file = st.file_uploader('')
+#page layout
+# def local_css(file_name): # taking values from app_style folder
+#     with open(file_name) as f:
+#         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+#         uploaded_file = st.file_uploader('')
+#         local_css('style.css')
+
+#care and plants info import
+
+plants_care = pd.read_csv('plantbase/scraping/plant_info_wk2.csv')
+
+# Page formatting and image display
+#st.set_option('deprecation.showfileUploaderEncoding', False)
+img = st.image('plantbase/data/plantbase_logo.png', style= 'left', width=700, output_format='png') #exchange logo for something else?
+#st.markdown("<h1 style='text-align: middle; color: red;'img/h1>", unsafe_allow_html=True)
+
+#st.markdown("<h1 style='text-align: center; color: green;'>PlantBase</h1>", unsafe_allow_html=True)
+#st.write('')
+st.markdown("<h3 style='text-align: center; color: green;'>Welcome to PlantBase, your best friend in growing outdoors shrub</h3>", unsafe_allow_html=True)
+
+st.write('')
+st.markdown("<h3 style='text-align: center; black: green;'>We will identify the plant of your dreams, and return your compatibility. </h3>", unsafe_allow_html=True)
+#.write('Follow the instructions below to get started.')
+st.write('')
+st.write('')
+st.markdown("<h5 style='text-align: left; black: black;'> Please upload an image of the FLOWER from plant you would like to identify. </h5", unsafe_allow_html=True)
+#st.markdown("### The app works best when the picture is of the actual flower of the plant, rather than leaves or stem")
+#file selector, upload from your pc
+uploaded_file = st.file_uploader('', type=("png", "jpg"))
+
 
 if uploaded_file is not None:
     # load and preprocess the image
     img = Image.open(uploaded_file)
-    img = img.resize((224,224))
     st.image(img, caption='Uploaded Image.', use_column_width=True)
     st.write("")
+    img = img.resize((224,224))
     img = img_to_array(img)
     X_list = []
     X_list.append(img)
     X = np.stack(X_list, axis = 0)
-    # st.write(f"{X}")
-    # st.write(f"{type(X)}")
-    # st.write(f"{X_list}")
-    # st.write(f"X shape is {X.shape} ")
-    # joblib_model = joblib.load('./model/working_vgg_model.joblib')
-    # y_pred = joblib_model.predict(X)
 
-    #load model and predict with tensorflow load_model
-    #reconstructed_model = load_model('./model/cnn_1_ak')
+    # load model and predict with tensorflow load_model
+    # local_model = load_model('model/cnn_1_ak')
     reconstructed_model = load_model('/home/jupyter/saved_models/josh_vgg_v2')
     y_pred = reconstructed_model.predict(X)
     # key for renaming columns
@@ -57,8 +76,110 @@ if uploaded_file is not None:
     # convert pred to dataframe with names columns
     y_pred_df = pd.DataFrame(y_pred)
     y_pred_df = y_pred_df.rename(columns = rename_columns)
-    st.write(y_pred_df)
-    output = y_pred_df.idxmax(axis=1)[0]
-    st.write(output)
-    transpose = y_pred_df.T
-    #plant_info = plants_info_df[plants_info_df.genus.str.contains(output)]
+    #st.write(y_pred_df)
+    plant_name = y_pred_df.idxmax(axis=1)[0]
+    st.write(plant_name)
+
+#-----------------------
+
+    # if user doesn't think this is their plant:
+    cnn_model = load_model('/home/jupyter/saved_models/augmented_basic_cnn')
+    cnn_preds = cnn_model.predict(X)
+    cnn_preds_df = pd.DataFrame(cnn_preds)
+    cnn_preds_df = cnn_preds_df.rename(columns = rename_columns)
+    cnn_top_3 =pd.DataFrame(cnn_preds_df.apply(lambda x:list(cnn_preds_df.columns[np.array(x).argsort()[::-1][:3]]), axis=1).to_list(),  columns=['Top1', 'Top2', 'Top3'])
+    st.write(cnn_top_3)
+    st.write(f"cnn top prediction: {cnn_top_3['Top1'][0]}")
+    if cnn_top_3['Top1'][0] != plant_name:
+        pred2 = cnn_top_3['Top1'][0]
+        if cnn_top_3['Top2'][0] != plant_name:
+            pred3 = cnn_top_3['Top2'][0]
+    else:
+        pred2 = cnn_top_3['Top2'][0]
+        pred3 = cnn_top_3['Top3'][0]
+
+    st.write(pred2)
+    st.write(pred3)
+    #code to show 3 top predictions
+
+    # st.write('')
+    # st.subheader('Please select picture of your flower')
+    # st.write('')
+    # st.write('')
+    # st.write("")
+     # Show prediction results
+
+     #add button click here to confirm
+    # def button
+    # if st.button('My plant'):
+    #     result = add(1, 2)
+    #     st.write('result: %s' % result)
+
+    # show image of choosen flower
+
+    name= st.subheader(f"**Your plant name is {plant_name}**")
+    st.write('')
+    # name = st.subheader(f"**Your plant name is {plants_care['Genus name'].iloc[0]}**")
+
+    plant_features= ['Genus','Details', 'Cultivation', 'Propagation', 'Suggested planting locations and garden types', 'Pruning', 'Pests', 'Diseases ']
+
+    #plant_name= plant_name # this plant name has to be here otherwise code is crushing with error UnboundLocalError: local variable referenced before assignment
+    # plant_name = plants_care['Genus name'].iloc[0] # only for internal testing
+    # plant_folders = ('plantbase/raw_data/train')
+
+    # def plant_image(plant_folders)
+    #     if plant_name in
+
+    # if st.button('This is NOT my plant'):
+    #     st.write('') # code if not this plant then search for others
+    # # else:
+    # #     st.write('Goodbye')
+
+
+    def how_to_grow(plant_name, plants_care, plant_features):
+        if plant_name in list(plants_care['Genus name']):
+            feature = plants_care.iloc[plants_care.index[plants_care['Genus name'] == plant_name]][plant_features].iloc[0]
+        return feature
+
+    st.markdown("<h1 style='text-align: left; color: green;'>How to grow your plant</h1>", unsafe_allow_html=True)
+
+    # # bootstrap 4 collapse example
+    components.html(
+        f"<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' integrity='sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm' crossorigin='anonymous'><script src='https://code.jquery.com/jquery-3.2.1.slim.min.js' integrity='sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN' crossorigin='anonymous'></script><script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js' integrity='sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl' crossorigin='anonymous'></script><div id='accordion'><div class='card'><div class='card-header' id='headingOne'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseOne' aria-expanded='true' aria-controls='collapseOne'>{'Here is something you did not know about your plant...'}</button></h5></div><div id='collapseOne' class='collapse' aria-labelledby='headingOne' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Genus')}</div></div></div><div class='card'><div class='card-header' id='headingZero'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseZero' aria-expanded='true' aria-controls='collapseZero'>{'Details'}</button></h5></div><div id='collapseZero' class='collapse' aria-labelledby='headingZero' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Details')}</div></div></div><div class='card'><div class='card-header' id='headingTwo'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseTwo' aria-expanded='true' aria-controls='collapseTwo'>{'Cultivation'}</button></h5></div><div id='collapseTwo' class='collapse' aria-labelledby='headingZero' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Cultivation')}</div></div></div><div class='card'><div class='card-header' id='headingTree'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseTree' aria-expanded='true' aria-controls='collapseTree'>{'Propagation'}</button></h5></div><div id='collapseTree' class='collapse' aria-labelledby='headingTree' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Propagation')}</div></div></div><div class='card'><div class='card-header' id='headingFour'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseFour' aria-expanded='true' aria-controls='collapseFour'>{'Suggested planting locations and garden types'}</button></h5></div><div id='collapseFour' class='collapse' aria-labelledby='headingFour' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Suggested planting locations and garden types')}</div></div></div><div class='card'><div class='card-header' id='headingFive'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseFive' aria-expanded='true' aria-controls='collapseFive'>{'Pruning'}</button></h5></div><div id='collapseFive' class='collapse' aria-labelledby='headingFive' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Pruning')}</div></div></div><div class='card'><div class='card-header' id='headingSix'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseSix' aria-expanded='true' aria-controls='collapseSix'>{'Pests'}</button></h5></div><div id='collapseSix' class='collapse' aria-labelledby='headingSix' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Pests')}</div></div></div><div class='card'><div class='card-header' id='headingSeven'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseSeven' aria-expanded='true' aria-controls='collapseSeven'>{'Diseases'}</button></h5></div><div id='collapseSeven' class='collapse' aria-labelledby='headingSeven' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Diseases')}</div></div></div></div>",
+        height=600,
+    )
+
+#---------------------------------------------------
+
+#code used:
+# bootstrap 4 collapse example
+# components.html(
+#     """
+#     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+#     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+#     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+#     <div id="accordion">
+
+#       <div class="card">
+#         <div class="card-header" id="headingOne">
+#           <h5 class="mb-0">
+#             <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+#             Cultivation
+#             </button>
+#           </h5>
+#         </div>
+#         <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+#           <div class="card-body">
+#            cultivation
+#           </div>
+#         </div>
+#       </div>
+
+#     </div>
+#     """,
+#     height=600,
+# )
+
+st.markdown("<h1 style='text-align: left; color: green;'>London 5 day weather forecast</h1>", unsafe_allow_html=True)
+df_test = pd.read_csv('plantbase/weather_API/44418-today.csv')
+st.dataframe(df_test)

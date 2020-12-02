@@ -1,14 +1,69 @@
-# Data analysis
-- Document here the project: plantbase
-- Description: Project Description
-- Data Source:
-- Type of analysis:
+# What is Plantbase?
+Plantbase is an app that uses a neural network to help the user identify a plant genus and provide plant care recommendations. 
 
-Please document the project the better you can.
+# Why Plantbase?
+Many plant owners today are not familiar with the care their plants actually need and end up improvising a care plan. Plantbase will help users determine the type of plant they have purchased and will provide them with detailed advice on how to care for their plants. 
 
-# Stratup the project
+# Where does the data come from? 
 
-The initial setup.
+Image database:
+- PlantView database contains 113,205 pictures belonging each to one of the 7 types of view reported into the meta-data, in a xml file (one per image) with explicit tags, used in the ImageCLEF/LifeCLEF project
+
+Scrapping Royal Horticultural Society website
+- The site contains 'growing guides' for each genus of plants, including advice on how to plant the flowers, how to perform on-going care, how to propagate, etc. 
+
+Metaweather API:
+- The API provides a 5-day weather forecast
+
+# What models did we use?
+
+Baseline model 2: Convolutional neural network with [XX] convolutional layers separated by [XX] pooling layers and followed by a Flattening and a Dense layer
+-[XX%] success rate, with no class rebalancing
+
+Baseline model 2: Convolutional neural network with [XX] convolutional layers separated by [XX] pooling layers and followed by a Flattening and a Dense layer
+-45% success rate (top probability is the correct species)
+
+Transfer learning using VGG16 model from "Very Deep Convolutional Networks for Large-Scale Image Recognition”, K. Simonyan and A. Zisserman (University of Oxford)
+- The model also uses convolutional & max pooling layers but uses 16 and was trained on +14M images
+- 61 % success rate (top probability is the correct species)
+
+# Data pre-processing
+
+Our baseline model suggested that genusus with fewer images underperformed:
+-Genusus with lower number of images yielded poor model performance
+-Genusus with different types of images (e.g. entire plant, leaf, flower) also underperformed
+
+Test 1 - Class weights: 
+-Trained the model with specific class weights to increase images for the least represented genuses
+-[XX]% success rate (top probability is the correct species) 
+
+Test 2 - Data augmentation: 
+- Augmented the data using Keras.ImageDataGenerator to transform the number of images for each genus class
+- [xx]% success rate (top probability is the correct species)
+
+Re-balancing
+
+
+# Predictions and recommendations on Streamlit app
+
+Step 1: The user uploads an image a plan
+
+Step 2: The model matches the plant with a genus 
+
+Step 3: The app displays a generic image for the predicted genus (determined in Step 2) and asks the user to confirm this is the same type of plant
+
+Step 4: 
+- 4a: If the user confirms the predicted genus, the model matches the genus with a plant care plan specific to the genus 
+- 4b: If the user rejects the predicted genus, the app will display the next two nearest looking plant genus and will run Step 3 and 4a
+
+# Going further
+- Increase the number of images per genus
+- Increase the number of plant genus
+- Test higher quality images
+- Provide more accurate weather based advice 
+
+
+# Setting up the project
 
 Create virtualenv and install the project:
 ```bash
@@ -62,7 +117,6 @@ Functionnal test with a script:
   $ cd /tmp
   $ plantbase-run
 ``` 
-
 # Continus integration
 ## Github 
 Every push of `master` branch will execute `.github/workflows/pythonpackages.yml` docker jobs.
