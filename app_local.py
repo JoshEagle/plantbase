@@ -9,6 +9,8 @@ import streamlit.components.v1 as components
 from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
+import weather
+import datetime
 
 
 #care and plants info import
@@ -177,7 +179,10 @@ st.markdown("Plants can be sensitive, and weather can be volatile. \
     This exclusive London trial of PlantBase is rolling out in London, so we've specialised the weather forecast for you. \
     You'll see alerts here where there are unusual weather conditions that could harm your plants.")
 
-weather = pd.read_csv('plantbase/weather_API/44418-today.csv')
+today = datetime.date.today().strftime('%y%m%d')
+while f'{today}.csv' not in os.listdir('plantbase/data/weather_data/'):
+    weather.main()
+weather = pd.read_csv(f'plantbase/data/weather_data/{today}.csv')
 
 weather_states = ['Snow','Sleet','Hail','Thunderstorm','Heavy Rain']
 
