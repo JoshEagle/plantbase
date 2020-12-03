@@ -48,6 +48,10 @@ if uploaded_file is not None:
     st.write('')
     name = st.subheader(f"**Your plant name is {plants_care['Genus name'].iloc[0]}**")
 #--------------------------two pictures-----------
+    pred1 =
+    pred2 =
+    pred3 =
+
 
     plant_name = plants_care['Genus name'].iloc[0]
     path = ('plantbase/data/plant_examples')
@@ -64,7 +68,7 @@ if uploaded_file is not None:
 
     st.image([plant,plant2], width=100)
 #----------------------------buttons -----------------
-    if st.button(plant1):
+    if st.button(pred1):
         st.write('')
         name = st.subheader(f"**Your plant name is {plants_care['Genus name'].iloc[0]}**")
 
@@ -87,7 +91,7 @@ if uploaded_file is not None:
             height=600,
         )
 
-    if st.button(plant2):
+    if st.button(pred2):
         st.write('')
         name = st.subheader(f"**Your plant name is {plants_care['Genus name'].iloc[0]}**")
 
@@ -109,7 +113,7 @@ if uploaded_file is not None:
             height=600,
         )
 
-    if st.button(plant3):
+    if st.button(pred3):
 
         st.write('')
         name = st.subheader(f"**Your plant name is {plants_care['Genus name'].iloc[0]}**")
@@ -136,4 +140,3 @@ if uploaded_file is not None:
     plant_features= ['Genus','Details', 'Cultivation', 'Propagation', 'Suggested planting locations and garden types', 'Pruning', 'Pests', 'Diseases ']
     #plant_name = plants_care['Genus name'].iloc[0] # only for internal testing
     plant_folders = ('plantbase/raw_data/train')
-
