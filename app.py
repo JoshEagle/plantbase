@@ -10,36 +10,26 @@ from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 
-#page layout
-# def local_css(file_name): # taking values from app_style folder
-#     with open(file_name) as f:
-#         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-#         uploaded_file = st.file_uploader('')
-#         local_css('style.css')
 
 #care and plants info import
 
 plants_care = pd.read_csv('plantbase/scraping/plant_info_wk2.csv')
 
 # Page formatting and image display
-#st.set_option('deprecation.showfileUploaderEncoding', False)
+st.set_option('deprecation.showfileUploaderEncoding', False)
 img = st.image('plantbase/data/plantbase_logo.png', style= 'left', width=700, output_format='png') #exchange logo for something else?
-#st.markdown("<h1 style='text-align: middle; color: red;'img/h1>", unsafe_allow_html=True)
 
-#st.markdown("<h1 style='text-align: center; color: green;'>PlantBase</h1>", unsafe_allow_html=True)
-#st.write('')
+st.write('')
 st.markdown("<h3 style='text-align: center; color: green;'>Welcome to PlantBase, your best friend in growing outdoors shrub</h3>", unsafe_allow_html=True)
 
 st.write('')
-st.markdown("<h3 style='text-align: center; black: green;'>We will identify the plant of your dreams, and return your compatibility. </h3>", unsafe_allow_html=True)
-#.write('Follow the instructions below to get started.')
+st.markdown("<h3 style='text-align: center; color: green;'>We will identify the plant of your dreams, and return your compatibility. </h3>", unsafe_allow_html=True)
 st.write('')
 st.write('')
-st.markdown("<h5 style='text-align: left; black: black;'> Please upload an image of the FLOWER from plant you would like to identify. </h5", unsafe_allow_html=True)
-#st.markdown("### The app works best when the picture is of the actual flower of the plant, rather than leaves or stem")
+st.markdown("<h5 style='text-align: left; color: black;'> Please upload an image of the FLOWER from plant you would like to identify. </h5", unsafe_allow_html=True)
+
 #file selector, upload from your pc
 uploaded_file = st.file_uploader('', type=("png", "jpg"))
-
 
 if uploaded_file is not None:
     # load and preprocess the image
@@ -123,18 +113,23 @@ if uploaded_file is not None:
 
     plant_features= ['Genus','Details', 'Cultivation', 'Propagation', 'Suggested planting locations and garden types', 'Pruning', 'Pests', 'Diseases ']
 
-    #plant_name= plant_name # this plant name has to be here otherwise code is crushing with error UnboundLocalError: local variable referenced before assignment
-    # plant_name = plants_care['Genus name'].iloc[0] # only for internal testing
-    # plant_folders = ('plantbase/raw_data/train')
 
-    # def plant_image(plant_folders)
-    #     if plant_name in
+#----------------two pictures under  the plant Genus---------------
+    plant_name = plants_care['Genus name'].iloc[0]
+    path = ('plantbase/data/plant_examples') # exchange once data is in virtual machine
 
-    # if st.button('This is NOT my plant'):
-    #     st.write('') # code if not this plant then search for others
-    # # else:
-    # #     st.write('Goodbye')
+    plant= Image.open(f'{path}/{plant_name}.jpg')
+    plant2= Image.open(f'{path}/{plant_name}{"2.jpg"}')
+    def flowers():
+        for file in os.listdir(path):
+            if plant_name in file:
+                plant, plant2
+            return plant, plant2
+    plant.resize((224,224)) # the picturs are not equal
+    plant2.resize((224,224))
 
+    st.image([plant,plant2], width=100)
+#-----------------------------dropdown with plant features----------------
 
     def how_to_grow(plant_name, plants_care, plant_features):
         if plant_name in list(plants_care['Genus name']):
@@ -149,36 +144,7 @@ if uploaded_file is not None:
         height=600,
     )
 
-#---------------------------------------------------
-
-#code used:
-# bootstrap 4 collapse example
-# components.html(
-#     """
-#     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-#     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-#     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-#     <div id="accordion">
-
-#       <div class="card">
-#         <div class="card-header" id="headingOne">
-#           <h5 class="mb-0">
-#             <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-#             Cultivation
-#             </button>
-#           </h5>
-#         </div>
-#         <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-#           <div class="card-body">
-#            cultivation
-#           </div>
-#         </div>
-#       </div>
-
-#     </div>
-#     """,
-#     height=600,
-# )
+#-----------------weather----------------------------------
 
 st.markdown("<h1 style='text-align: left; color: green;'>London 5 day weather forecast</h1>", unsafe_allow_html=True)
 df_test = pd.read_csv('plantbase/weather_API/44418-today.csv')
