@@ -150,6 +150,16 @@ components.html(
     height=600,
 )
 
+
+
+
+st.markdown("<h1 style='text-align: left; color: green;'>London 5 day weather forecast</h1>", unsafe_allow_html=True)
+weather = pd.read_csv('plantbase/weather_API/44418-today.csv')
+weather_st = st.dataframe(weather)
+
+data=[weather[['min_temp','max_temp']]for key in weather]
+
+st.area_chart(data=data)
 #---------------------------------------------------
 
 #code used:
