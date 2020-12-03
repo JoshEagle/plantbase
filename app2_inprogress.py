@@ -9,6 +9,7 @@ import streamlit.components.v1 as components
 from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
+from streamlit_cropper import st_cropper
 
 
 plants_care = pd.read_csv('plantbase/scraping/plant_info_wk2.csv')
@@ -62,16 +63,30 @@ if uploaded_file is not None:
     plant.resize((224,224)) # the picturs are not equal
     plant2.resize((224,224))
 
+     if plant.capitalize
+
     #st.image([plant,plant2], width=100)
+    # Get a cropped image from the fronten
+
+
+    #cropped_img = st_cropper(plant)
+
+    # Manipulate cropped image at will
+    #cropped_img.thumbnail((150,150))
+    #st.image(cropped_img)
+
 
     col1, col2 = st.beta_columns(2)
 
     col1.header("Original")
-    col1.image(plant, width=100)
+    col1= col1.image(plant, use_column_width=True, use_column_height=100)
+    #image = img_to_array(col1)
+    # image = col1.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
+    # image = preprocess_input(image)
 
     #grayscale = plant.convert('LA')
     col2.header("Grayscale")
-    col2.image(plant2, width=144)
+    col2.image(plant2, use_column_width=True, use_column_height=100)
 
 #----------------------------buttons -----------------
     plant_features= ['Genus','Details', 'Cultivation', 'Propagation', 'Suggested planting locations and garden types', 'Pruning', 'Pests', 'Diseases ']
