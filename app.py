@@ -72,24 +72,7 @@ if uploaded_file is not None:
 
 #-----------------------
 
-    # if user doesn't think this is their plant:
-    cnn_model = load_model('/home/jupyter/saved_models/augmented_basic_cnn')
-    cnn_preds = cnn_model.predict(X)
-    cnn_preds_df = pd.DataFrame(cnn_preds)
-    cnn_preds_df = cnn_preds_df.rename(columns = rename_columns)
-    cnn_top_3 =pd.DataFrame(cnn_preds_df.apply(lambda x:list(cnn_preds_df.columns[np.array(x).argsort()[::-1][:3]]), axis=1).to_list(),  columns=['Top1', 'Top2', 'Top3'])
-    st.write(cnn_top_3)
-    st.write(f"cnn top prediction: {cnn_top_3['Top1'][0]}")
-    if cnn_top_3['Top1'][0] != plant_name:
-        pred2 = cnn_top_3['Top1'][0]
-        if cnn_top_3['Top2'][0] != plant_name:
-            pred3 = cnn_top_3['Top2'][0]
-    else:
-        pred2 = cnn_top_3['Top2'][0]
-        pred3 = cnn_top_3['Top3'][0]
 
-    st.write(pred2)
-    st.write(pred3)
     #code to show 3 top predictions
 
     # st.write('')
@@ -115,7 +98,6 @@ if uploaded_file is not None:
 
 
 #----------------two pictures under  the plant Genus---------------
-    plant_name = plants_care['Genus name'].iloc[0]
     path = ('plantbase/data/plant_examples') # exchange once data is in virtual machine
 
     plant= Image.open(f'{path}/{plant_name}.jpg')
@@ -129,6 +111,30 @@ if uploaded_file is not None:
     plant2.resize((224,224))
 
     st.image([plant,plant2], width=100)
+
+    ### BUTTON
+
+     # if user doesn't think this is their plant:
+    cnn_model = load_model('/home/jupyter/saved_models/augmented_basic_cnn')
+    cnn_preds = cnn_model.predict(X)
+    cnn_preds_df = pd.DataFrame(cnn_preds)
+    cnn_preds_df = cnn_preds_df.rename(columns = rename_columns)
+    cnn_top_3 =pd.DataFrame(cnn_preds_df.apply(lambda x:list(cnn_preds_df.columns[np.array(x).argsort()[::-1][:3]]), axis=1).to_list(),  columns=['Top1', 'Top2', 'Top3'])
+    st.write(cnn_top_3)
+    st.write(f"cnn top prediction: {cnn_top_3['Top1'][0]}")
+    if cnn_top_3['Top1'][0] != plant_name:
+        pred2 = cnn_top_3['Top1'][0]
+        if cnn_top_3['Top2'][0] != plant_name:
+            pred3 = cnn_top_3['Top2'][0]
+    else:
+        pred2 = cnn_top_3['Top2'][0]
+        pred3 = cnn_top_3['Top3'][0]
+
+
+    pred2_img = Image.open(f'{path}/{pred2}.jpg')
+    pred3_img = Image.open(f'{path}/{pred3}.jpg')
+    st.image([pred2_img, pred3_img])
+
 #-----------------------------dropdown with plant features----------------
 
     def how_to_grow(plant_name, plants_care, plant_features):
