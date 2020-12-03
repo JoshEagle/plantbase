@@ -4,15 +4,15 @@ import pandas as pd
 import datetime
 
 
-def scrape_to_file(html, path):
+def scrape_to_file(html, today):
 
-    os_command = f'curl {html} > {path}-today.html'
+    os_command = f'curl {html} > plantbase/data/weather_data/{today}.html'
     os.system(os_command)
 
 
-def get_weather(path):
+def get_weather(today):
 
-    weather = json.load(open(f'{path}-today.html'))
+    weather = json.load(open(f'plantbase/data/weather_data/{today}.html'))
 
     weather_summary = []
     titles, paras = [], []
@@ -31,7 +31,7 @@ def get_weather(path):
         weather_summary.append(dict(zip(titles,paras)))
 
     for row in weather_summary:
-            date_object = datetime.datetime.strptime(row['applicable_date'], '%Y-%M-%d')
+            date_object = datetime.datetime.strptime(row['applicable_date'], '%Y-%m-%d')
             row['applicable_date'] = date_object.strftime('%a %-d %b %Y')
             row['min_temp'] = str(round(row['min_temp'])) + ' C'
             row['max_temp'] = str(round(row['max_temp'])) + ' C'
@@ -50,13 +50,12 @@ def df_engineering(df):
 
 def main():
 
-    today = datetime.date.today().strftime('%Y/%-m/%-d')
+    today = datetime.date.today().strftime('%y%m%d')
     html = 'https://www.metaweather.com/api/location/44418/'
-    path = html.replace('https://www.metaweather.com/api/location/','').replace('/','')
 
-    scrape_to_file(html, path)
-    weather_info_df = df_engineering(get_weather(path))
-    weather_info_df.to_csv(f'{path}-today.csv')
+    scrape_to_file(html, today)
+    weather_info_df = df_engineering(get_weather(today))
+    weather_info_df.to_csv(f'plantbase/data/weather_data/{today}.csv')
 
 
 if __name__ == '__main__':
