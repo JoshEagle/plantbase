@@ -1,4 +1,3 @@
-import joblib
 import pandas as pd
 import os
 import pytz
@@ -23,10 +22,10 @@ st.set_option('deprecation.showfileUploaderEncoding', False)
 img = st.image('plantbase/data/plantbase_logo.png', style= 'left', width=700, output_format='png') #exchange logo for something else?
 
 st.write('')
-st.markdown("<h3 style='text-align: center; color: green;'>Welcome to PlantBase, your best friend in growing outdoors shrub</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: green;'>Welcome to PlantBase, your personal gardening assistant</h3>", unsafe_allow_html=True)
 
 st.write('')
-st.markdown("<h3 style='text-align: center; color: green;'>We will identify the plant of your dreams, and return your compatibility. </h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: green;'>PlantBase will identify your plant species and return relevant plant care information. </h3>", unsafe_allow_html=True)
 st.write('')
 st.write('')
 st.markdown("<h5 style='text-align: left; color: black;'> Please upload an image of the FLOWER from plant you would like to identify. </h5", unsafe_allow_html=True)
@@ -74,7 +73,7 @@ if uploaded_file is not None:
 
 #------------------------------------------------------------------
 
-    name = st.subheader(f"**We think your plant is {pred1}**")
+    name = st.subheader(f"**{pred1}**")
     st.write('')
     # name = st.subheader(f"**Your plant name is {plants_care['Genus name'].iloc[0]}**")
 
@@ -118,7 +117,7 @@ if uploaded_file is not None:
     pred2_img = Image.open(f'{path}/{pred2}.jpg').resize((200,200))
     pred3_img = Image.open(f'{path}/{pred3}.jpg').resize((200,200))
 
-    st.markdown(f'We think your plant is {pred1}. Does that look right to you?')
+    st.markdown(f'Our best prediction for your plant is: {pred1}. Does that look right to you?')
 
     if st.button(f'Yes, my plant looks like {pred1}!'):
 
