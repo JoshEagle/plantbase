@@ -85,7 +85,7 @@ if uploaded_file is not None:
     pred1_img2= Image.open(f'{path}/{pred1}{"2.jpg"}')
     def flowers():
         for file in os.listdir(path):
-            if pred1 in file:
+            if pred1.upper() in file.upper():
                 return pred1_img1, pred1_img2
 
     pred1_img1 = pred1_img1.resize((200,200))
