@@ -88,41 +88,32 @@ if uploaded_file is not None:
             if pred1 in file:
                 return pred1_img1, pred1_img2
 
-
-    def crop(image):
-        width, height = image.size
-        prop = min(width, height)
-        return image.crop((width/2-prop,height/2-prop,width/2+prop,height/2+prop))
-
-    pred1_img1 = crop(pred1_img1)
-    pred1_img2 = crop(pred1_img2)
-    # pred1_img1 = pred1_img1.resize((244,244))
-    # pred1_img2 = pred1_img2.resize((244,244))
+    pred1_img1 = pred1_img1.resize((200,200))
+    pred1_img2 = pred1_img2.resize((200,200))
 
     col1, col2 = st.beta_columns(2)
-    # col1.header("Original")
     col1.image(pred1_img1, use_column_width=True)
-    # col2.header("Grayscale")
     col2.image(pred1_img2, use_column_width=True)
-
-    # st.image([pred1_img1, pred1_img2], width=100)
 
     cnn_model = load_model('raw_data/augmented_basic_cnn')
     cnn_preds = cnn_model.predict(X)
     cnn_preds_df = pd.DataFrame(cnn_preds)
     cnn_preds_df = cnn_preds_df.rename(columns = rename_columns)
-    cnn_top_3 =pd.DataFrame(cnn_preds_df.apply(lambda x:list(cnn_preds_df.columns[np.array(x).argsort()[::-1][:3]]), axis=1).to_list(),  columns=['Top1', 'Top2', 'Top3'])
-    if cnn_top_3['Top1'][0] != pred1:
-        pred2 = cnn_top_3['Top1'][0]
-    if cnn_top_3['Top2'][0] != pred1:
-        pred3 = cnn_top_3['Top2'][0]
+    cnn_top_3 =pd.DataFrame(cnn_preds_df.apply(lambda x:list(cnn_preds_df.columns[np.array(x).argsort()[::-1][:3]]), axis=1).to_list(),
+                                              columns=['first', 'second', 'third'])
+    if pred1 == cnn_top_3['first'][0]:
+        pred2 = cnn_top_3['second'][0]
+        pred3 = cnn_top_3['third'][0]
+    elif pred1 == cnn_top_3['second'][0]:
+        pred2 = cnn_top_3['first'][0]
+        pred3 = cnn_top_3['third'][0]
     else:
-        pred2 = cnn_top_3['Top2'][0]
-        pred3 = cnn_top_3['Top3'][0]
+        pred2 = cnn_top_3['first'][0]
+        pred3 = cnn_top_3['second'][0]
 
 
-    pred2_img = Image.open(f'{path}/{pred2}.jpg')
-    pred3_img = Image.open(f'{path}/{pred3}.jpg')
+    pred2_img = Image.open(f'{path}/{pred2}.jpg').resize((200,200))
+    pred3_img = Image.open(f'{path}/{pred3}.jpg').resize((200,200))
 
     st.markdown(f'We think your plant is {pred1}. Does that look right to you?')
 
@@ -144,8 +135,9 @@ if uploaded_file is not None:
 
     st.markdown(f'Otherwise, does your plant look like {pred2} or {pred3}?')
 
-    st.image(pred2_img)
-    st.markdown(pred2)
+    col1, col2 = st.beta_columns(2)
+    col1.image(pred2_img, use_column_width=True)
+    col1.subheader(pred2)
     if st.button(f'My plant actually looks like {pred2}.'):
 
         plant_name = pred2
@@ -162,8 +154,8 @@ if uploaded_file is not None:
             f"<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' integrity='sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm' crossorigin='anonymous'><script src='https://code.jquery.com/jquery-3.2.1.slim.min.js' integrity='sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN' crossorigin='anonymous'></script><script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js' integrity='sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl' crossorigin='anonymous'></script><div id='accordion'><div class='card'><div class='card-header' id='headingOne'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseOne' aria-expanded='true' aria-controls='collapseOne'>{'Here is something you did not know about your plant...'}</button></h5></div><div id='collapseOne' class='collapse' aria-labelledby='headingOne' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Genus')}</div></div></div><div class='card'><div class='card-header' id='headingZero'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseZero' aria-expanded='true' aria-controls='collapseZero'>{'Details'}</button></h5></div><div id='collapseZero' class='collapse' aria-labelledby='headingZero' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Details')}</div></div></div><div class='card'><div class='card-header' id='headingTwo'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseTwo' aria-expanded='true' aria-controls='collapseTwo'>{'Cultivation'}</button></h5></div><div id='collapseTwo' class='collapse' aria-labelledby='headingZero' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Cultivation')}</div></div></div><div class='card'><div class='card-header' id='headingTree'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseTree' aria-expanded='true' aria-controls='collapseTree'>{'Propagation'}</button></h5></div><div id='collapseTree' class='collapse' aria-labelledby='headingTree' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Propagation')}</div></div></div><div class='card'><div class='card-header' id='headingFour'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseFour' aria-expanded='true' aria-controls='collapseFour'>{'Suggested planting locations and garden types'}</button></h5></div><div id='collapseFour' class='collapse' aria-labelledby='headingFour' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Suggested planting locations and garden types')}</div></div></div><div class='card'><div class='card-header' id='headingFive'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseFive' aria-expanded='true' aria-controls='collapseFive'>{'Pruning'}</button></h5></div><div id='collapseFive' class='collapse' aria-labelledby='headingFive' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Pruning')}</div></div></div><div class='card'><div class='card-header' id='headingSix'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseSix' aria-expanded='true' aria-controls='collapseSix'>{'Pests'}</button></h5></div><div id='collapseSix' class='collapse' aria-labelledby='headingSix' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Pests')}</div></div></div><div class='card'><div class='card-header' id='headingSeven'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseSeven' aria-expanded='true' aria-controls='collapseSeven'>{'Diseases'}</button></h5></div><div id='collapseSeven' class='collapse' aria-labelledby='headingSeven' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Diseases')}</div></div></div></div>",
             height=600)
 
-    st.image(pred3_img)
-    st.markdown(pred3)
+    col2.image(pred3_img, use_column_width=True)
+    col2.subheader(pred3)
     if st.button(f'My plant actually looks like {pred3}.'):
 
         plant_name = pred3
@@ -192,12 +184,12 @@ weather_states = ['Snow','Sleet','Hail','Thunderstorm','Heavy Rain']
 for i in range(5):
     for j in range(len(weather_states)):
         if weather['weather_state_name'][i] == weather_states[j]:
-            st.subheader(f"Warning! {weather_states[j]} forecast on {weather['applicable_date'][i]}.")
+            st.markdown(f"Warning! {weather_states[j]} forecast on {weather['applicable_date'][i]}.")
     if int(weather['min_temp'][i].split()[0]) <= 1:
-        st.subheader(f"Warning! Frosty conditions expected on {weather['applicable_date'][i]}.")
+        st.markdown(f"Warning! Frosty conditions expected on {weather['applicable_date'][i]}.")
     if int(weather['max_temp'][i].split()[0]) >= 28:
-        st.subheader(f"Warning! Heat wave expected on {weather['applicable_date'][i]}.")
+        st.markdown(f"Warning! Heat wave expected on {weather['applicable_date'][i]}.")
     if int(weather['wind_speed'][i].split()[0]) >= 32:
-        st.subheader(f"Warning! Gale force winds expected on {weather['applicable_date'][i]}.")
+        st.markdown(f"Warning! Gale force winds expected on {weather['applicable_date'][i]}.")
 
 weather_st = st.dataframe(weather)
