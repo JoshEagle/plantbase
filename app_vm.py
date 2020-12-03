@@ -49,22 +49,22 @@ if uploaded_file is not None:
     # reconstructed_model = load_model('/home/jupyter/saved_models/josh_vgg_v2')
     y_pred = local_model.predict(X)
     # key for renaming columns
-    rename_columns = {0: 'Ajuga',
+    rename_columns = {0: 'Bugleweed',
                  1: 'Allium',
-                 2: 'Campanula',
+                 2: 'Bellflower',
                  3: 'Cirsium',
-                 4: 'Crataegus',
+                 4: 'Hawthorn',
                  5: 'Gentiana',
                  6: 'Geranium',
                  7: 'Iris',
-                 8: 'Malva',
-                 9: 'Narcissus',
-                 10: 'Ophrys',
-                 11: 'Rosa',
-                 12: 'Trifolium',
+                 8: 'Mallow',
+                 9: 'Daffodil',
+                 10: 'Bee orchid',
+                 11: 'Rose',
+                 12: 'Clover',
                  13: 'Verbascum',
-                 14: 'Veronica',
-                 15: 'Viola'}
+                 14: 'Speedwell',
+                 15: 'Violet'}
     # convert pred to dataframe with names columns
     y_pred_df = pd.DataFrame(y_pred)
     y_pred_df = y_pred_df.rename(columns = rename_columns)
