@@ -12,6 +12,7 @@ from tensorflow.keras.models import load_model
 import weather
 import datetime
 
+plant_name = ''
 
 #care and plants info import
 
@@ -87,7 +88,7 @@ if uploaded_file is not None:
     pred1_img2= Image.open(f'{path}/{pred1}{"2.jpg"}')
     def flowers():
         for file in os.listdir(path):
-            if pred1 in file:
+            if pred1.upper() in file.upper():
                 return pred1_img1, pred1_img2
 
     pred1_img1 = pred1_img1.resize((200,200))
@@ -138,29 +139,21 @@ if uploaded_file is not None:
     st.markdown(f'Otherwise, does your plant look like {pred2} or {pred3}?')
 
     col1, col2 = st.beta_columns(2)
-    col1.image(pred2_img, use_column_width=True)
-    col1.subheader(pred2)
-    if st.button(f'My plant actually looks like {pred2}.'):
 
-        plant_name = pred2
+    with col1:
+        st.image(pred2_img, use_column_width=True)
+        st.subheader(pred2)
+        if st.button(f'My plant actually looks like {pred2}.'):
+            plant_name = pred2
+    with col2:
+        st.image(pred3_img, use_column_width=True)
+        st.subheader(pred3)
+        if st.button(f'My plant actually looks like {pred3}.'):
+            plant_name = pred3
 
-        def how_to_grow(plant_name, plants_care, plant_features):
-            if plant_name in list(plants_care['Genus name']):
-                feature = plants_care.iloc[plants_care.index[plants_care['Genus name'] == plant_name]][plant_features].iloc[0]
-            return feature
-
-        st.markdown("<h1 style='text-align: left; color: green;'>How to grow your plant</h1>", unsafe_allow_html=True)
-
-        # # bootstrap 4 collapse example
-        components.html(
-            f"<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' integrity='sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm' crossorigin='anonymous'><script src='https://code.jquery.com/jquery-3.2.1.slim.min.js' integrity='sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN' crossorigin='anonymous'></script><script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js' integrity='sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl' crossorigin='anonymous'></script><div id='accordion'><div class='card'><div class='card-header' id='headingOne'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseOne' aria-expanded='true' aria-controls='collapseOne'>{'Here is something you did not know about your plant...'}</button></h5></div><div id='collapseOne' class='collapse' aria-labelledby='headingOne' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Genus')}</div></div></div><div class='card'><div class='card-header' id='headingZero'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseZero' aria-expanded='true' aria-controls='collapseZero'>{'Details'}</button></h5></div><div id='collapseZero' class='collapse' aria-labelledby='headingZero' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Details')}</div></div></div><div class='card'><div class='card-header' id='headingTwo'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseTwo' aria-expanded='true' aria-controls='collapseTwo'>{'Cultivation'}</button></h5></div><div id='collapseTwo' class='collapse' aria-labelledby='headingZero' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Cultivation')}</div></div></div><div class='card'><div class='card-header' id='headingTree'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseTree' aria-expanded='true' aria-controls='collapseTree'>{'Propagation'}</button></h5></div><div id='collapseTree' class='collapse' aria-labelledby='headingTree' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Propagation')}</div></div></div><div class='card'><div class='card-header' id='headingFour'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseFour' aria-expanded='true' aria-controls='collapseFour'>{'Suggested planting locations and garden types'}</button></h5></div><div id='collapseFour' class='collapse' aria-labelledby='headingFour' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Suggested planting locations and garden types')}</div></div></div><div class='card'><div class='card-header' id='headingFive'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseFive' aria-expanded='true' aria-controls='collapseFive'>{'Pruning'}</button></h5></div><div id='collapseFive' class='collapse' aria-labelledby='headingFive' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Pruning')}</div></div></div><div class='card'><div class='card-header' id='headingSix'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseSix' aria-expanded='true' aria-controls='collapseSix'>{'Pests'}</button></h5></div><div id='collapseSix' class='collapse' aria-labelledby='headingSix' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Pests')}</div></div></div><div class='card'><div class='card-header' id='headingSeven'><h5 class='mb-0'><button class='btn btn-link collapsed' data-toggle='collapse' data-target='#collapseSeven' aria-expanded='true' aria-controls='collapseSeven'>{'Diseases'}</button></h5></div><div id='collapseSeven' class='collapse' aria-labelledby='headingSeven' data-parent='#accordion'><div class='card-body'>{how_to_grow(plant_name, plants_care, 'Diseases')}</div></div></div></div>",
-            height=600)
-
-    col2.image(pred3_img, use_column_width=True)
-    col2.subheader(pred3)
-    if st.button(f'My plant actually looks like {pred3}.'):
-
-        plant_name = pred3
+    if plant_name == pred1:
+        pass
+    else:
         def how_to_grow(plant_name, plants_care, plant_features):
             if plant_name in list(plants_care['Genus name']):
                 feature = plants_care.iloc[plants_care.index[plants_care['Genus name'] == plant_name]][plant_features].iloc[0]
@@ -189,13 +182,12 @@ weather_states = ['Snow','Sleet','Hail','Thunderstorm','Heavy Rain']
 for i in range(5):
     for j in range(len(weather_states)):
         if weather['weather_state_name'][i] == weather_states[j]:
-            st.markdown(f"Warning! {weather_states[j]} forecast on {weather['applicable_date'][i]}.")
+            st.subheader(f"Warning! {weather_states[j]} forecast on {weather['applicable_date'][i]}.")
     if int(weather['min_temp'][i].split()[0]) <= 1:
-        st.markdown(f"Warning! Frosty conditions expected on {weather['applicable_date'][i]}.")
+        st.subheader(f"Warning! Frosty conditions expected on {weather['applicable_date'][i]}.")
     if int(weather['max_temp'][i].split()[0]) >= 28:
-        st.markdown(f"Warning! Heat wave expected on {weather['applicable_date'][i]}.")
+        st.subheader(f"Warning! Heat wave expected on {weather['applicable_date'][i]}.")
     if int(weather['wind_speed'][i].split()[0]) >= 32:
-        st.markdown(f"Warning! Gale force winds expected on {weather['applicable_date'][i]}.")
+        st.subheader(f"Warning! Gale force winds expected on {weather['applicable_date'][i]}.")
 
 weather_st = st.dataframe(weather)
-
