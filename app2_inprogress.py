@@ -242,6 +242,32 @@ if uploaded_file is not None:
 # )
 
 st.markdown("<h1 style='text-align: left; color: green;'>London 5 day weather forecast</h1>", unsafe_allow_html=True)
+
+# Plants can be sensitive, and weather can be volatile.
+# This exclusive London trial of PlantBase is rolling out in London, so we've specialised the weather forecast for you.
+# You'll see alerts here where there are unusual weather conditions that could harm your plants.
+
 weather = pd.read_csv('plantbase/weather_API/44418-today.csv')
 weather_st = st.dataframe(weather)
 
+st.markdown('Weather states:')
+st.markdown(f"{weather['weather_state_name']}")
+if 'Heavy Rain' in weather['weather_state_name']:
+    st.markdown('Warning! Heavy rain forecast!')
+st.markdown('Minimum temperatures:')
+st.markdown(f"{weather['min_temp']}")
+st.markdown('Maximum temperatures:')
+st.markdown(f"{weather['max_temp']}")
+st.markdown('Wind speeds:')
+st.markdown(f"{weather['wind_speed']}")
+
+
+
+# if weather['min_temp'] <= 0:
+#   print('Warning! Frost days forecast!')
+# if weather['max_temp'] >= 28:
+#   print('Warning! Heat wave forecast!')
+# if weather['wind_speed'] >= 32:
+#   print('Warning! Gale force winds forecast!')
+# if weather['weather_conditions'] in ['snow','sleet','hail','thunderstorm','heavy rain']:
+#   print('Warning! ')
