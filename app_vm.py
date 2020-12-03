@@ -112,8 +112,8 @@ if uploaded_file is not None:
         pred3 = cnn_top_3['second'][0]
 
 
-    pred2_img = Image.open(f'{path}/{pred2}.jpg').resize((200,200))
-    pred3_img = Image.open(f'{path}/{pred3}.jpg').resize((200,200))
+    pred2_img.upper() = Image.open(f'{path}/{pred2}.jpg'.upper()).resize((200,200))
+    pred3_img.upper() = Image.open(f'{path}/{pred3}.jpg'.upper()).resize((200,200))
 
     st.markdown(f'We think your plant is {pred1}. Does that look right to you?')
 
