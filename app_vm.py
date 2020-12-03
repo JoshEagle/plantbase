@@ -150,7 +150,7 @@ if uploaded_file is not None:
         if st.button(f'My plant actually looks like {pred3}.'):
             plant_name = pred3
 
-    if plant_name == pred1:
+    if plant_name in [pred1, '']:
         pass
     else:
         def how_to_grow(plant_name, plants_care, plant_features):
