@@ -68,13 +68,13 @@ if uploaded_file is not None:
     #plant_name = plants_care['Genus name'].iloc[0] # only for internal testing
     plant_folders = ('plantbase/raw_data/train')
 
-    plant1= st.image([plant])
-    plant2= st.image([plant2])
+    # plant1= st.image([plant])
+    # plant2= st.image([plant2])
 
-    if st.button('This is NOT my plant'):
-        st.write('Sorry that was wrong, is this your picture?')
-        right_plant = st.radio('Which is your plant?',
-        (plant1, plant2)
+    # if st.button('This is NOT my plant'):
+    #     st.write('Sorry that was wrong, is this your picture?')
+    #     right_plant = st.radio('Which is your plant?',
+    #     (plant1, plant2)
 
 
         # if right_plant == 'plant1'
