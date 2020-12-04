@@ -17,32 +17,20 @@ Metaweather API:
 
 # What models did we use?
 
-Baseline model 2: Convolutional neural network with [XX] convolutional layers separated by [XX] pooling layers and followed by a Flattening and a Dense layer
--[XX%] success rate, with no class rebalancing
-
-Baseline model 2: Convolutional neural network with [XX] convolutional layers separated by [XX] pooling layers and followed by a Flattening and a Dense layer
--45% success rate (top probability is the correct species)
+Baseline model: Convolutional neural network with 3 convolutional layers separated by 3 pooling layers and followed by a Flattening and a Dense layer
+-30% success rate (top probability is the correct species)
 
 Transfer learning using VGG16 model from "Very Deep Convolutional Networks for Large-Scale Image Recognition”, K. Simonyan and A. Zisserman (University of Oxford)
 - The model also uses convolutional & max pooling layers but uses 16 and was trained on +14M images
-- 61 % success rate (top probability is the correct species)
+- 61 % success rate (top probability is the correct species), 86% success rate (top probability for top 3 genus)
 
 # Data pre-processing
 
-Our baseline model suggested that genusus with fewer images underperformed:
--Genusus with lower number of images yielded poor model performance
--Genusus with different types of images (e.g. entire plant, leaf, flower) also underperformed
+Our baseline model revealed two significant issues: 
+-Overfitting: effective at predicting images in our training set but did not generalise well to our test data
+-Class imbalance: predicting the majority class overly frequently
 
-Test 1 - Class weights: 
--Trained the model with specific class weights to increase images for the least represented genuses
--[XX]% success rate (top probability is the correct species) 
-
-Test 2 - Data augmentation: 
-- Augmented the data using Keras.ImageDataGenerator to transform the number of images for each genus class
-- [xx]% success rate (top probability is the correct species)
-
-Re-balancing
-
+We used data augmentation and class weights to help resolve these issues 
 
 # Predictions and recommendations on Streamlit app
 
@@ -53,7 +41,7 @@ Step 2: The model matches the plant with a genus
 Step 3: The app displays a generic image for the predicted genus (determined in Step 2) and asks the user to confirm this is the same type of plant
 
 Step 4: 
-- 4a: If the user confirms the predicted genus, the model matches the genus with a plant care plan specific to the genus 
+- 4a: If the user confirms the predicted genus, the model matches the genus with a plant care plan specific to the genus and display the care plan + weather forecast
 - 4b: If the user rejects the predicted genus, the app will display the next two nearest looking plant genus and will run Step 3 and 4a
 
 # Going further
