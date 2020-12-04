@@ -47,7 +47,7 @@ if uploaded_file is not None:
     X = np.stack(X_list, axis = 0)
 
     # load model and predict with tensorflow load_model
-    local_model = load_model('raw_data/josh_vgg_v2')
+    local_model = load_model('/home/jupyter/saved_models/josh_vgg_v2')
     # reconstructed_model = load_model('/home/jupyter/saved_models/josh_vgg_v2')
     y_pred = local_model.predict(X)
     # key for renaming columns
@@ -99,7 +99,7 @@ if uploaded_file is not None:
     col1.image(pred1_img1, use_column_width=True)
     col2.image(pred1_img2, use_column_width=True)
 
-    cnn_model = load_model('raw_data/augmented_basic_cnn')
+    cnn_model = load_model('/home/jupyter/saved_models/augmented_basic_cnn')
     cnn_preds = cnn_model.predict(X)
     cnn_preds_df = pd.DataFrame(cnn_preds)
     cnn_preds_df = cnn_preds_df.rename(columns = rename_columns)
