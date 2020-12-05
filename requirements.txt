@@ -20,3 +20,4 @@ mlflow
 six==1.13.0
 google-cloud-storage
 psutil
+Flask==1.1.2
